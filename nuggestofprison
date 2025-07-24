@@ -9374,6 +9374,7 @@ task.spawn(function()
 	end
 end)
 -- Guard blacklist
+--[[
 task.spawn(function()
 	while true do
 		wait(0.1)
@@ -9404,6 +9405,7 @@ task.spawn(function()
 		end
 	end
 end)
+]]
 -- Criminal blacklist
 task.spawn(function()
 	while true do
