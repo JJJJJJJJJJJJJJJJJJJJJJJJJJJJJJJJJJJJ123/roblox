@@ -9421,7 +9421,7 @@ task.spawn(function()
 	end
 end)
 -- Plague
-
+--[[
 task.spawn(function() -- crashes?
 	while true do
 	wait(0.1)
@@ -9461,7 +9461,7 @@ task.spawn(function() -- crashes?
 		end
 	end
 	end
-end)
+end)]]
 
 --Killauras and antitouch
 task.spawn(function()
