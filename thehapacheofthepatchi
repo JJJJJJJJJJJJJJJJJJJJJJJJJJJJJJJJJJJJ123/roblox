@@ -3938,9 +3938,6 @@ end
 --Use commands
 local chatdebounce = false
 local OnCommand = function(text, whoran)
-	--[[if whoran == LocalPlayer.Name or x then
-
-	end]]
 	local Args = text:split(" ")
 	if not Args[1] then
 		chatdebounce = nil
@@ -3961,12 +3958,18 @@ local OnCommand = function(text, whoran)
 			MainFrame.Visible = true; PLAdmin:FindFirstChild("TextButton"):Destroy()
 		end
 	end
-	if not (Args[1]:sub(1, #Prefix) == Prefix) and not (Args[1]:sub(1, #permAdminPrefix) == permAdminPrefix) then
-		chatdebounce = nil
-		return
-	end
+	if not (Args[1]:sub(1, #Prefix) == Prefix or Args[1]:sub(1, #permAdminPrefix) == permAdminPrefix) then
+	chatdebounce = nil
+	print("boing")
+	return
+end
 	local function cm(args)
-		return args == Args[1]:sub(#Prefix+1):lower()
+		if whoran == nil then
+			return args == Args[1]:sub(#Prefix+1):lower()
+		else
+			print("i dont think so")
+			return args == Args[1]:sub(#permAdminPrefix+1):lower()
+		end
 	end
 
 	if cm("bring") or cm("get") then
@@ -4064,10 +4067,10 @@ local OnCommand = function(text, whoran)
 			ArrestPL(plr, nil, true)
 		end
 		if plr.TeamColor ~= BrickColor.new("Bright orange") then
-			MakeCrim(plr, true, true, true)
+			MakeCrim(plr, true, false, true)
 		end
 		if plr.TeamColor ~= BrickColor.new("Bright blue") then
-			MakeCrim(plr, true, true, true)
+			MakeCrim(plr, true, false, true)
 		end
 	elseif cm("blacklistguard") or cm("blg") then
 		local DaPlayer = PlrFromArgs(Args[2], nil)
@@ -4213,6 +4216,38 @@ local OnCommand = function(text, whoran)
 				--end
 			end
 			Notif("KK", "Gave permadmin to " .. plr.Name)
+	elseif cm("unpermadmin") or cm("unpadmin") then
+		local AwesomeSauceLocalPlayer = game:GetService("Players").LocalPlayer
+		if whoran == nil or whoran.UserId == AwesomeSauceLocalPlayer.UserId then
+			if targetName == "all" then
+			for _, player in pairs(Players:GetPlayers()) do
+				if isPermAdmin(player.UserId) then
+					removePermAdmin(player.UserId)
+					Notif("Removed permadmin: " .. player.Name, "", 1)
+				end
+			end
+			plr = PlrFromArgs(Args[2], false)
+			if plr == nil then
+				Notif("Error ):", "Invalid player")
+			else
+				local removed = false
+				for i, id in ipairs(permAdmin) do
+					if id == plr.UserId then
+						table.remove(permAdmin, i)
+						removed = true
+						break
+					end
+				end
+
+				if removed then
+					writefile("prizzlifePermAdminList", table.concat(permAdmin, "\n"))
+					Notif("KK", "Removed permadmin from " .. plr.Name)
+				else
+					Notif("Hmm", plr.Name .. " wasn't in the permadmin list")
+				end
+			end
+		end
+	end
 	elseif cm("goto") or cm("to") then
 		local DaPlayer = PlrFromArgs(Args[2], false)
 		if DaPlayer then
@@ -9048,24 +9083,73 @@ for i,v in pairs(Players:GetPlayers()) do
 		end)
 	end
 end
--- permadmin
+--[[ permadmin inefficent
 for i,v in pairs(Players:GetPlayers()) do
-	if v == LocalPlayer then
+	--if v == LocalPlayer then
 		--print("im not you!")
+	if not ChatCon[v.UserId] then
 		ChatCon[v.UserId] = v.Chatted:Connect(function(msg)
-			--print("chat connected shit")
+			Notif("chat connected shit", "", 1)
 			if isPermAdmin(v.UserId) then
 				--print("permadmin chatted zomgg")
-				--print("string subscribe" .. string.sub(msg, 1, #permAdminPrefix))
+				Notif("string subscribe " .. string.sub(msg, 1, #permAdminPrefix), "", 1)
 				--if string.sub(msg, 1, #permAdminPrefix) == permAdminPrefix then
-					print("im running the cmd")
+					Notif("im running the cmd", "", 1)
 					OnCommand(msg, v)
 				--end
 			end
 		end)
 	end
+	--end
 end
+Players.PlayerAdded:Connect(function()
+for i,v in pairs(Players:GetPlayers()) do
+	--if v == LocalPlayer then
+		--print("im not you!")
+	if not ChatCon[v.UserId] then
+			ChatCon[v.UserId] = v.Chatted:Connect(function(msg)
+				Notif("chat connected shit", "", 1)
+				if isPermAdmin(v.UserId) then
+					--print("permadmin chatted zomgg")
+					Notif("string subscribe " .. string.sub(msg, 1, #permAdminPrefix), "", 1)
+					--if string.sub(msg, 1, #permAdminPrefix) == permAdminPrefix then
+						Notif("im running the cmd", "", 1)
+						OnCommand(msg, v)
+					--end
+				end
+			end)
+		end
+	end
+	--end
+end)]]
+-- permadmin
+ChatCon = {}
 
+game:GetService("TextChatService").OnIncomingMessage = function(message) -- awesome efficient and better permadmin
+	local textSource = message.TextSource
+	if not textSource then return end -- system messages or nil sender
+
+	local userId = textSource.UserId
+	local player = Players:GetPlayerByUserId(userId)
+	if not player then return end
+
+	if not ChatCon[userId] then
+		ChatCon[userId] = true -- mark as connected
+	end
+
+	--Notif("chat connected shit", "", 1)
+
+	if isPermAdmin(userId) then
+		local msg = message.Text
+		--Notif("string subscribe " .. string.sub(msg, 1, #permAdminPrefix), "", 1)
+
+		-- Optional: check prefix match
+		-- if string.sub(msg, 1, #permAdminPrefix) == permAdminPrefix then
+			--Notif("im running the cmd", "", 1)
+			OnCommand(msg, player)
+		-- end
+	end
+end
 Connections.PlayerAdded = Players.PlayerAdded:Connect(function(plr)
 	if Loops.Kill[plr.UserId] then
 		Loops.Kill[plr.UserId] = plr
@@ -9556,13 +9640,13 @@ task.spawn(function()
 			if v.Team and v.Team.Name == "Guards" and CheckWhitelist(v) then
 				if Loops.GuardBlacklist[v.UserId] then
 					pcall(function()
-						MakeCrim(v, false, true, true)
+						MakeCrim(v, true, false, true)
 						task.wait(0.2)
 					end)
 				end
 				if Loops.GuardBlacklistTeam.all == true and CheckWhitelist(v) then
 					pcall(function()
-						MakeCrim(v, false, true, true)
+						MakeCrim(v, true, false, true)
 						task.wait(0.2)
 					end)
 				end
@@ -10560,6 +10644,7 @@ task.spawn(function()
 	AddList("JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123 (Credits)", "Prizzlife modder on github", false)
 	AddList("qaqaisbest3", "roblox acc, special thanks for helping (Credits)", false)
 	AddList("SleepingxNezuko", "roblox acc, special thanks for helping (Credits)", false)
+	AddList("pjsonnalj", "roblox acc, helping me test (Credits)")
 	AddList("Command List", "If you accidentally lose the gui, type /revert in chat", false)
 	AddList("prefix [Prefix]", "Changes prefix (Default set to " .. TPrefix .. ")", false) --V
 	AddList("discord / support / help", "Get the discord invite", false)
@@ -10879,6 +10964,9 @@ task.spawn(function()
 	AddList("cure [plr]", "Makes player immune to the plague", false)
 	AddList("uncure [plr]", "revoke said players immunity to the plague", false)
 	AddList("permPrefix", "Change perm admin prefix (default is !)", false) -- ADD TO CM() LIST
+	AddList("permadmin / padmin [plr]", "Change perm admin prefix (default is !)", false)
+	AddList("unpermadmin / unpadmin [plr, all]", "Change perm admin prefix (default is !)", false)
+	AddList("unpadmin", "Change perm admin prefix (default is !)", false)
 	--Toggles
 	NewToggleList("LocalPlayer_RunSpeed", "Default value is: 24", "click", function(arg)
 		local str = tonumber(arg)
