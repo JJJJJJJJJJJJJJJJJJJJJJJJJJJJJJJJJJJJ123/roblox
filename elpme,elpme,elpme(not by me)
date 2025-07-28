@@ -1583,14 +1583,14 @@ local MusicOptionTxt = Instance.new("TextLabel")
 
 ScreenGui.Parent = playergui
 
-CustomizeGui.Name = "CustomizeGui"
+--[[CustomizeGui.Name = "CustomizeGui"
 CustomizeGui.Parent = ScreenGui
 CustomizeGui.BackgroundColor3 = Color3.new(0.294118, 0.294118, 0.294118)
 CustomizeGui.BackgroundTransparency = 0.5
 CustomizeGui.BorderColor3 = Color3.new(0, 0, 0)
 CustomizeGui.BorderSizePixel = 2
 CustomizeGui.Position = UDim2.new(0, 0, 0.5, 0)
-CustomizeGui.Size = UDim2.new(0.449999988, 0, 0.449999988, 0)
+CustomizeGui.Size = UDim2.new(0.449999988, 0, 0.449999988, 0) -- minimized UDim2.new(-0.45,0,0.5,0) 
 
 Customize.Name = "Customize"
 Customize.Parent = CustomizeGui
@@ -1841,7 +1841,7 @@ Message.TextColor3 = Color3.new(1, 1, 1)
 Message.TextScaled = true
 Message.TextSize = 15
 Message.TextStrokeTransparency = 0.75
-Message.TextWrapped = true
+Message.TextWrapped = true]]
 
 local attun = Instance.new("Attachment", knife)
 attun.Position = Vector3.new(0, 0.1, -1.75)
@@ -3952,6 +3952,7 @@ mouse.KeyDown:connect(function(key)
             ImageLabel.Size = UDim2.new(1, 0, 1, 0)
             ImageLabel.Image = "rbxassetid://74443700"
             ImageLabel.ImageColor3 = Color3.new(1, 0, 0)
+            ImageLabel.IgnoreGuiInset = true -- i added this :D
             end
             if canbackgroundmusic == true then
                 local sound = Instance.new('Sound',playergui)
