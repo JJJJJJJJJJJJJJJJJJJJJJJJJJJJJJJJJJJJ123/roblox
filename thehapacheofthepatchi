@@ -11157,7 +11157,7 @@ task.spawn(function()
 	PunchButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	PunchButton.BorderSizePixel = 0
 	PunchButton.Size = UDim2.new(1, 0, 0.325925916, 0) -- og fist icon: http://www.roblox.com/asset/?id=7651229347
-	PunchButton.Image = "https://tr.rbxcdn.com/180DAY-67868770dd29f136ecdc063bd30432f1/420/420/Decal/Webp/noFilter" --Yes, random gta sa fist icon
+	PunchButton.Image = "http://www.roblox.com/asset/?id=7651229347" --Yes, random gta sa fist icon
 
 	UIAspectRatioConstraint.Parent = PunchButton
 	UIAspectRatioConstraint.AspectRatio = 1.364
@@ -11170,7 +11170,7 @@ task.spawn(function()
 	CrawlButton.BorderSizePixel = 0
 	CrawlButton.Position = UDim2.new(0, 0, 0.330000013, 0)
 	CrawlButton.Size = UDim2.new(1, 0, 0.325925916, 0)
-	CrawlButton.Image = "http://www.roblox.com/asset/?id=6929077666" -- og crawl button http://www.roblox.com/asset/?id=6925323189
+	CrawlButton.Image = "http://www.roblox.com/asset/?id=6925323189" -- og crawl button http://www.roblox.com/asset/?id=6925323189
 
 	UIAspectRatioConstraint_2.Parent = CrawlButton
 	UIAspectRatioConstraint_2.AspectRatio = 1.364
@@ -11183,7 +11183,7 @@ task.spawn(function()
 	RunButton.BorderSizePixel = 0
 	RunButton.Position = UDim2.new(0, 0, 0.668945849, 0)
 	RunButton.Size = UDim2.new(1, 0, 0.325925916, 0)
-	RunButton.Image = "https://tr.rbxcdn.com/180DAY-d324ece9594fc676ce0e3a6caaa12969/420/420/Decal/Webp/noFilter" -- og run button http://www.roblox.com/asset/?id=4425413038
+	RunButton.Image = "http://www.roblox.com/asset/?id=4425413038" -- og run button http://www.roblox.com/asset/?id=4425413038
 
 	UIAspectRatioConstraint_3.Parent = RunButton
 	UIAspectRatioConstraint_3.AspectRatio = 1.364
