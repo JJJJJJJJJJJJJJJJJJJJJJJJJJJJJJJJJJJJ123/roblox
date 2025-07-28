@@ -1,3 +1,4 @@
+UglyDisgustingOpenButton = false
 if not isfile("prizzlifePermAdminList") then
 	writefile("prizzlifePermAdminList", "")
 	wait(0.1)
@@ -503,13 +504,15 @@ MinimizeButton.MouseButton1Click:Connect(function()
 end)
 CloseButton.MouseButton1Click:Connect(function()
 	MainFrame.Visible = false
-	local TextButton=Instance.new("TextButton");TextButton.Parent=PLAdmin;TextButton.AnchorPoint=Vector2.new(0.5,0.5)
-	TextButton.BackgroundColor3=Color3.fromRGB(0,0,0);TextButton.BorderColor3=Color3.fromRGB(255,255,255);TextButton.BorderSizePixel=2
-	TextButton.Position=UDim2.new(0.05,0,0.5,0);TextButton.Size=UDim2.new(0,80,0,22);TextButton.Font=Enum.Font.SourceSans
-	TextButton.Text="OPEN";TextButton.TextColor3=Color3.fromRGB(255,255,255);TextButton.TextSize=14.000
-	local con;con=TextButton.MouseButton1Click:Connect(function()
-		con:Disconnect();TextButton:Destroy();MainFrame.Visible = true
-	end)
+	if UglyDisgustingOpenButton == true then
+		local TextButton=Instance.new("TextButton");TextButton.Parent=PLAdmin;TextButton.AnchorPoint=Vector2.new(0.5,0.5)
+		TextButton.BackgroundColor3=Color3.fromRGB(0,0,0);TextButton.BorderColor3=Color3.fromRGB(255,255,255);TextButton.BorderSizePixel=2
+		TextButton.Position=UDim2.new(0.05,0,0.5,0);TextButton.Size=UDim2.new(0,80,0,22);TextButton.Font=Enum.Font.SourceSans
+		TextButton.Text="OPEN";TextButton.TextColor3=Color3.fromRGB(255,255,255);TextButton.TextSize=14.000
+		local con;con=TextButton.MouseButton1Click:Connect(function()
+			con:Disconnect();TextButton:Destroy();MainFrame.Visible = true
+		end)
+	end
 end)
 SettingButton.MouseButton1Click:Connect(function()
 	if CMDS_Frame.Visible == true then
@@ -554,6 +557,10 @@ local Players = game:GetService("Players")
 local Teams = game:GetService("Teams")
 local LocalPlayer = Players.LocalPlayer
 local RegModule = nil
+
+if LocalPlayer.UserId == 187191716 then
+	UglyDisgustingOpenButton = true
+end
 
 setClipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
