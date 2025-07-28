@@ -37,6 +37,7 @@ local ExecBar = Instance.new("TextBox")
 local CloseButton = Instance.new("TextButton")
 local MinimizeButton = Instance.new("TextButton")
 local SettingButton = Instance.new("ImageButton")
+local IYbutton = Instance.new("TextButton")
 local Toggles_Frame = Instance.new("ScrollingFrame")
 local CMDS_Frame = Instance.new("ScrollingFrame")
 local UIListLayout = Instance.new("UIListLayout")
@@ -11099,9 +11100,9 @@ task.spawn(function()
 		Settings.Ranked.GiveCmds = not Settings.Ranked.GiveCmds
 		return Settings.Ranked.GiveCmds
 	end)
-	NewToggleList("RankedSetting_CustomCmds", "Allow/Disallow ranked players to use custom commands", Settings.Ranked.GiveCmds, function()
-		Settings.Ranked.GiveCmds = not Settings.Ranked.GiveCmds
-		return Settings.Ranked.GiveCmds
+	NewToggleList("RankedSetting_CustomCmds", "Allow/Disallow ranked players to use custom commands", Settings.Ranked.CustomCmds, function()
+		Settings.Ranked.CustomCmds = not Settings.Ranked.CustomCmds
+		return Settings.Ranked.CustomCmds
 	end)
 	if Execution_Runtime then
 		Notif("Potang ina mo", "Loaded in " .. tostring(tick() - Execution_Runtime) .. " second(s). github.com/devguy100/PrizzLife", 6)
@@ -11157,6 +11158,7 @@ task.spawn(function()
 	PunchButton.BorderSizePixel = 0
 	PunchButton.Size = UDim2.new(1, 0, 0.325925916, 0)
 	PunchButton.Image = "http://www.roblox.com/asset/?id=7651229347" --Yes, random gta sa fist icon
+	PunchButton.BackgroundTransparency = 1
 
 	UIAspectRatioConstraint.Parent = PunchButton
 	UIAspectRatioConstraint.AspectRatio = 1.364
@@ -11170,6 +11172,7 @@ task.spawn(function()
 	CrawlButton.Position = UDim2.new(0, 0, 0.330000013, 0)
 	CrawlButton.Size = UDim2.new(1, 0, 0.325925916, 0)
 	CrawlButton.Image = "http://www.roblox.com/asset/?id=6925323189"
+	CrwalButton.BackgroundTransparency = 1
 
 	UIAspectRatioConstraint_2.Parent = CrawlButton
 	UIAspectRatioConstraint_2.AspectRatio = 1.364
@@ -11183,6 +11186,7 @@ task.spawn(function()
 	RunButton.Position = UDim2.new(0, 0, 0.668945849, 0)
 	RunButton.Size = UDim2.new(1, 0, 0.325925916, 0)
 	RunButton.Image = "http://www.roblox.com/asset/?id=4425413038"
+	RunButton.BackgroundTransparency = 1
 
 	UIAspectRatioConstraint_3.Parent = RunButton
 	UIAspectRatioConstraint_3.AspectRatio = 1.364
