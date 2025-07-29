@@ -1,3 +1,9 @@
+Ashesmode = false
+
+if LocalPlayer.UserId == 187191716 then
+	Ashesmode = true
+end
+
 local p = game.Players.LocalPlayer
 spawn(function() 
 fe=workspace.FilteringEnabled
@@ -3234,7 +3240,7 @@ function spawned()
 					getrid(handle)
 					notify("Gun mode disabled")
 				end]]
-			elseif key == "c" then -- originally the "c" key
+			elseif key == "c" or (Ashesmode and key == "g") then -- originally the "c" key
 				if blademode ~= "knife" and equipped == true then
 					getrid(handle)
 					if firsttime3 then
