@@ -2320,15 +2320,18 @@ function grab()
 end
 
 function kill()
-             for i, plr in pairs(game.Players:GetChildren()) do
-                        if plr.Name ~= game.Players.LocalPlayer.Name then
-                        if not plr:isFriendsWith(game.Players.LocalPlayer.userId) then
-                        for i = 1, 10 do
-                        game.ReplicatedStorage.meleeEvent:FireServer(plr)
-                        end
-                        end
+    for _, plr in pairs(game.Players:GetPlayers()) do
+    if plr ~= game.Players.LocalPlayer and
+       plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") and
+       game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and
+       (plr.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 2.5 then
+
+        for _ = 1, 10 do
+            game.ReplicatedStorage.meleeEvent:FireServer(plr)
         end
+        break
     end
+end
     
     targetweld3pt = grabbed:FindFirstChild("Right Arm")
     local targetrightshoulder = rightshoulder
@@ -2844,7 +2847,6 @@ if me:FindFirstChild('Right Arm') and me:FindFirstChild('Torso') and me:FindFirs
             if thing == nil then
                 ree = hit.Parent.Parent
             end
-            plrfromchar = ree:FindFirstChild('Humanoid'):GetPlayerFromCharacter()
             if ree:FindFirstChildOfClass('Humanoid').Health > 0 then
                 knofe:FindFirstChild("Trail", true).Enabled = false
                 game:GetService('Debris'):AddItem(knofe,5)
@@ -2862,11 +2864,12 @@ if me:FindFirstChild('Right Arm') and me:FindFirstChild('Torso') and me:FindFirs
                     end
                 end
                 hit.Anchored = true
+                local playerfromchar = game.Players:GetPlayerFromCharacter(ree)
                 if ree:FindFirstChildOfClass('Humanoid') and hit.Name == "Torso" or hit.Name == "Head" then
-                    ree:FindFirstChildOfClass('Humanoid').Health = 0
+                    --ree:FindFirstChildOfClass('Humanoid').Health = 0
+                    KillPL(playerfromchar)
                 end
                 wait()
-                KillPL(plrfromchar)
                 killz(ree,hit.Name,knofe)
             else
                 knofe:FindFirstChild("Trail", true).Enabled = false
@@ -3817,6 +3820,7 @@ function stab()
         acting = false
 
              for i, plr in pairs(game.Players:GetChildren()) do
+                        KillPL(plr)
                         if plr.Name ~= game.Players.LocalPlayer.Name then
                         for i = 1, 10 do
                         workspace.Remote.ItemHandler:InvokeServer({Position = LocalPlayer.Character.Head.Position, Parent = workspace.Prison_ITEMS.giver:FindFirstChild("AK-47") or workspace.Prison_ITEMS.single:FindFirstChild("AK-47")})
