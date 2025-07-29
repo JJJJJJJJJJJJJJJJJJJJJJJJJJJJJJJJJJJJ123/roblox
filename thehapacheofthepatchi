@@ -4428,7 +4428,9 @@ end
 		CMDS_Frame.BackgroundColor3 = Color3.fromRGB(45 + Args[2], 45 + Args[3], 45 + Args[4])
 		CMDS_Frame.BorderColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
 	elseif cm("gknife2") then
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/main/TSGDOOSGVIGDOLEDGSNTASDGAAAADGSAAA"))()
+		task.spawn(function()
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/main/TSGDOOSGVIGDOLEDGSNTASDGAAAADGSAAA"))()
+		end)
 	elseif cm("goto") or cm("to") then
 		local DaPlayer = PlrFromArgs(Args[2], false)
 		if DaPlayer then
