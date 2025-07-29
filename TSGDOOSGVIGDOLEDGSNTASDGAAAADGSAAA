@@ -3206,7 +3206,7 @@ function spawned()
 				if blademode ~= "katana" and equipped == true then
 					getrid(handle)
 					if firsttime2 then
-						firsttime2 = false
+						--firsttime2 = false
 						notify("Katana mode enabled || Press Q, E, or click to perform an action",true)
 					else
 						notify("Katana mode enabled")
@@ -3216,7 +3216,7 @@ function spawned()
 					getrid(handle)
 					notify("Katana mode disabled")
 				end
-			elseif key == "v" then
+			--[[elseif key == "v" then -- gun isnt implemented
 				if blademode ~= "gun" and equipped == true then
 					getrid(handle)
 					if firsttime5 then
@@ -3229,12 +3229,12 @@ function spawned()
 				elseif blademode == "gun" then
 					getrid(handle)
 					notify("Gun mode disabled")
-				end
-			elseif key == "c" then
+				end]]
+			elseif key == "c" then -- originally the "c" key
 				if blademode ~= "knife" and equipped == true then
 					getrid(handle)
 					if firsttime3 then
-						firsttime3 = false
+						--firsttime3 = false
 						notify("Knife mode enabled || Press F, E, T, or Q to set modes; Click to perform an action",true)
 					else
 						notify("Knife mode enabled")
