@@ -66,7 +66,7 @@ local rekt = {}
 
 -- Objects
 
-local Nuee = Instance.new("ScreenGui")
+local Nuee = Instance.new("ScreenGui")--[[
 local Customize = Instance.new("TextButton")
 local Frame = Instance.new("Frame")
 local TextLabel = Instance.new("TextLabel")
@@ -85,7 +85,7 @@ local ChildLock = Instance.new("Frame")
 local TextLabel_5 = Instance.new("TextLabel")
 local mathz = Instance.new("TextLabel")
 local TextBox = Instance.new("TextBox")
-local Black = Instance.new('Frame')
+local Black = Instance.new('Frame')]]
 local fps = Instance.new('TextLabel')
 
 -- Properties
@@ -96,7 +96,7 @@ pcall(function()
 	Nuee.Parent = player.PlayerGui
 end)
 
-
+--[[
 Customize.Name = "Customize"
 Customize.Parent = Nuee
 Customize.BackgroundColor3 = Color3.new(0, 0.776471, 0.282353)
@@ -289,7 +289,7 @@ mathz.TextColor3 = Color3.new(1, 1, 1)
 mathz.TextScaled = true
 mathz.TextSize = 14
 mathz.TextWrapped = true
-
+]]
 fps.Name = "fps"
 fps.Parent = Frame
 fps.BackgroundColor3 = Color3.new(1, 1, 1)
@@ -304,7 +304,7 @@ fps.TextScaled = true
 fps.TextSize = 14
 fps.TextWrapped = true
 fps.TextXAlignment = Enum.TextXAlignment.Left
-
+--[[
 TextBox.Parent = ChildLock
 TextBox.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
 TextBox.BorderSizePixel = 0
@@ -326,13 +326,15 @@ Black.BorderSizePixel = 0
 Black.BackgroundColor3 = Color3.new(0,0,0)
 Black.Parent = Frame_3
 
-TextBox.FocusLost:connect(function()
+ChildLock:Destroy()
+
+--[[TextBox.FocusLost:connect(function()
 	--if TextBox.Text == tostring(answer) or TextBox.Text == "r="..tostring(answer) or TextBox.Text == "r= "..tostring(answer) or TextBox.Text == "r = "..tostring(answer) or TextBox.Text == "r= "..tostring(answer) or TextBox.Text == tostring(answer).."=r" or TextBox.Text == tostring(answer).." =r" or TextBox.Text == tostring(answer).."= r" or TextBox.Text == tostring(answer).." = r" then
-		--[[ChildLock:Destroy()
+		ChildLock:Destroy()
 		childlock = false
-		notify("Child lock disabled, press B to enable sausage mode.",true)]]
+		notify("Child lock disabled, press B to enable sausage mode.",true)
 	--end
-end)
+end)]]
 
 local mousedown = false
 mouse.Button1Down:connect(function()
@@ -343,12 +345,12 @@ mouse.Button1Up:connect(function()
 	slidee = false
 end)
 
-Slidee.MouseButton1Down:connect(function()
+--[[Slidee.MouseButton1Down:connect(function()
 	slidee = true
 end)
 Slidee.MouseButton1Up:connect(function()
 	slidee = false
-end)
+end)]]
 
 mouse.Move:connect(function()
 	if mousedown then
@@ -372,7 +374,7 @@ mouse.Move:connect(function()
 	end
 end)
 
-R.FocusLost:connect(function()
+--[[R.FocusLost:connect(function()
 	if R.Text ~= "Input" then
 		if tonumber(R.Text) then
 			if tonumber(R.Text) > 255 then
@@ -410,9 +412,9 @@ B.FocusLost:connect(function()
 			B.Text = "Input"
 		end
 	end
-end)
+end)]]
 
-local open = false
+--[[local open = false
 local opening = false
 Customize.MouseButton1Click:connect(function()
 	if opening == false then
@@ -432,7 +434,7 @@ Customize.MouseButton1Click:connect(function()
 	end
 end)
 
-Frame_2.BackgroundColor3 = Color3.fromRGB(117,0,0)
+Frame_2.BackgroundColor3 = Color3.fromRGB(117,0,0)]]
 
 function removewelds(part)
 	for i,v in pairs(part:GetChildren()) do
