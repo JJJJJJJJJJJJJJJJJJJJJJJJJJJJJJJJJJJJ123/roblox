@@ -1,4 +1,48 @@
-wait(0.5)
+LocalPlayer = game.Players.LocalPlayer
+
+local KillPL = function(plr, events, guntouse, WaitToDie) 
+	local AK = LocalPlayer.Backpack:FindFirstChild("AK-47") or LocalPlayer.Character:FindFirstChild("AK-47")
+	if not AK and not guntouse then
+		workspace.Remote.ItemHandler:InvokeServer({Position = LocalPlayer.Character.Head.Position, Parent = workspace.Prison_ITEMS.giver:FindFirstChild("AK-47") or workspace.Prison_ITEMS.single:FindFirstChild("AK-47")})
+		task.wait()
+		AK = LocalPlayer.Backpack:FindFirstChild("AK-47") or LocalPlayer.Character:FindFirstChild("AK-47")
+	elseif guntouse then
+		AK = LocalPlayer.Backpack:FindFirstChild(guntouse) or LocalPlayer.Character:FindFirstChild(guntouse)
+		if not AK then
+			workspace.Remote.ItemHandler:InvokeServer({Position = LocalPlayer.Character.Head.Position, Parent = workspace.Prison_ITEMS.giver:FindFirstChild(guntouse) or workspace.Prison_ITEMS.single:FindFirstChild(guntouse)})
+			task.wait()
+			AK = LocalPlayer.Backpack:FindFirstChild(guntouse)
+		end
+	end
+	if plr.Character:FindFirstChild("Humanoid").Health == 0 or plr.Character:FindFirstChildWhichIsA("ForceField") then
+		return
+	end
+	local Eve = events or 10
+	local ShootEvents = {};
+	for i = 1, Eve do
+		ShootEvents[#ShootEvents + 1] = {
+			Hit = plr.Character:FindFirstChildOfClass("Part");
+			Cframe = CFrame.new();
+			RayObject = Ray.new(Vector3.new(), Vector3.new());
+			Distance = 0;
+		};
+	end
+	task.spawn(function()
+		for i = 1, 6 do
+			game:GetService("ReplicatedStorage").ReloadEvent:FireServer(AK)
+			task.wait(.1)
+		end
+	end)
+	if plr.TeamColor == LocalPlayer.TeamColor then
+		
+	else
+		game:GetService("ReplicatedStorage").ShootEvent:FireServer(ShootEvents, AK)
+	end
+	if WaitToDie then
+		repeat task.wait() until not plr.Character or not plr.Character:FindFirstChildOfClass("Humanoid") or plr.Character:FindFirstChildOfClass("Humanoid").Health == 0 or plr.Character:FindFirstChildWhichIsA("ForceField")
+	end
+end
+wait(0.1)
 math.randomseed(tick())
 local player = game.Players.LocalPlayer
 local rekt = {}
@@ -191,6 +235,7 @@ function killz(playa,hitz,kneef,explode,pool,head,charred,override)
                     game:GetService('Debris'):AddItem(bleedpart,2)
             end)
             coru()
+            KillPL(playa)
             end
         end 
     elseif hitz == "Left Arm" then
@@ -226,6 +271,7 @@ function killz(playa,hitz,kneef,explode,pool,head,charred,override)
                     end
                 end)
                 coru()
+                KillPL(playa)
             end
 
             local B = Instance.new("Part")
@@ -284,6 +330,7 @@ function killz(playa,hitz,kneef,explode,pool,head,charred,override)
                     game:GetService('Debris'):AddItem(bleedpart,2)
             end)
             coru()
+            KillPL(playa)
             end
         end
     elseif hitz == "Right Leg" then
@@ -319,6 +366,7 @@ function killz(playa,hitz,kneef,explode,pool,head,charred,override)
                     end
                 end)
                 coru()
+                KillPL(playa)
             end
             local B = Instance.new("Part")
             B.TopSurface = 0
@@ -375,6 +423,7 @@ function killz(playa,hitz,kneef,explode,pool,head,charred,override)
                     game:GetService('Debris'):AddItem(bleedpart,2)
             end)
             coru()
+            KillPL(playa)
             end
             if playa then
                 table.insert(rekt,playa)
@@ -414,6 +463,7 @@ function killz(playa,hitz,kneef,explode,pool,head,charred,override)
                     end
                 end)
                 coru()
+                KillPL(playa)
             end
 
             local B = Instance.new("Part")
@@ -472,6 +522,7 @@ function killz(playa,hitz,kneef,explode,pool,head,charred,override)
                     game:GetService('Debris'):AddItem(bleedpart,2)
             end)
             coru()
+            KillPL(playa)
             end
             if playa then
                 table.insert(rekt,playa)
@@ -2271,8 +2322,10 @@ end
 function kill()
              for i, plr in pairs(game.Players:GetChildren()) do
                         if plr.Name ~= game.Players.LocalPlayer.Name then
+                        if not plr:isFriendsWith(game.Players.LocalPlayer.userId) then
                         for i = 1, 10 do
                         game.ReplicatedStorage.meleeEvent:FireServer(plr)
+                        end
                         end
         end
     end
@@ -2791,6 +2844,7 @@ if me:FindFirstChild('Right Arm') and me:FindFirstChild('Torso') and me:FindFirs
             if thing == nil then
                 ree = hit.Parent.Parent
             end
+            plrfromchar = ree:FindFirstChild('Humanoid'):GetPlayerFromCharacter()
             if ree:FindFirstChildOfClass('Humanoid').Health > 0 then
                 knofe:FindFirstChild("Trail", true).Enabled = false
                 game:GetService('Debris'):AddItem(knofe,5)
@@ -2812,6 +2866,7 @@ if me:FindFirstChild('Right Arm') and me:FindFirstChild('Torso') and me:FindFirs
                     ree:FindFirstChildOfClass('Humanoid').Health = 0
                 end
                 wait()
+                KillPL(plrfromchar)
                 killz(ree,hit.Name,knofe)
             else
                 knofe:FindFirstChild("Trail", true).Enabled = false
@@ -3764,6 +3819,7 @@ function stab()
              for i, plr in pairs(game.Players:GetChildren()) do
                         if plr.Name ~= game.Players.LocalPlayer.Name then
                         for i = 1, 10 do
+                        workspace.Remote.ItemHandler:InvokeServer({Position = LocalPlayer.Character.Head.Position, Parent = workspace.Prison_ITEMS.giver:FindFirstChild("AK-47") or workspace.Prison_ITEMS.single:FindFirstChild("AK-47")})
                         game.ReplicatedStorage.meleeEvent:FireServer(plr)
 end
 end
