@@ -1,3 +1,5 @@
+addListNum = 1
+
 UglyDisgustingOpenButton = false
 if not isfile("prizzlifePermAdminList") then
 	writefile("prizzlifePermAdminList", "")
@@ -362,7 +364,7 @@ local DraggifyFrame = function(frame)
 		end
 	end)
 end
-
+if not Ashesmode then
 local AddList = function(args, description, isCategory)
 	if isCategory then
 		local newCategory = Instance.new("TextLabel")
@@ -418,36 +420,128 @@ local AddList = function(args, description, isCategory)
 	NewDescription.TextSize = 14.000
 	NewDescription.Position = UDim2.new(TPos.X.Offset, TPos.X.Offset, TPos.Y.Scale + 0.37, TPos.Y.Offset)
 	print("added list" .. args)
+	addListNum = addListNum + 1
 end
+else
+local AddList = function(args, description, isCategory)
+	if isCategory then
+		local newCategory = Instance.new("TextLabel")
+		newCategory.Name = "Category_Frame"
+		newCategory.Parent = CMDS_Frame
+		newCategory.BackgroundColor3 = Color3.fromRGB(12 + 232, 12 + 89, 12 + 220)
+		newCategory.BorderColor3 = Color3.fromRGB(0 + 232, 0 + 89, 0 + 220)
+		newCategory.Size = UDim2.new(0, 288, 0, 20)
+		newCategory.Font = Enum.Font.SourceSans
+		newCategory.Text = args
+		newCategory.TextColor3 = Color3.fromRGB(255, 255, 255)
+		newCategory.TextScaled = true
+		newCategory.TextSize = 14.000
+		newCategory.TextWrapped = true
+		return
+	end
 
-local NewToggleList = function(title, description, defaultvalue, toggle, istextbox)
+	local NewFrame = Instance.new("Frame")
+	NewFrame.Name = "CMDFrame"
+	NewFrame.Parent = CMDS_Frame
+	NewFrame.BackgroundColor3 = Color3.fromRGB(255 + 232, 255 + 89, 255 + 220)
+	NewFrame.BorderColor3 = Color3.fromRGB(0 + 232, 0 + 89, 0 + 220)
+	NewFrame.Size = UDim2.new(0, 288, 0, 50)
+
+	local TextLabel = Instance.new("TextLabel")
+	TextLabel.Parent = NewFrame
+	TextLabel.Name = "CMD_Name"
+	TextLabel.BackgroundColor3 = Color3.fromRGB(30 + 232, 30 + 89, 30 + 220)
+	TextLabel.BorderColor3 = Color3.fromRGB(0 + 232, 0 + 89, 0 + 220)
+	TextLabel.BorderSizePixel = 1
+	TextLabel.ZIndex = 2
+	TextLabel.Size = UDim2.new(0, 288, 0, 18)
+	TextLabel.Font = Enum.Font.SourceSans
+	TextLabel.Text = args
+	TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabel.TextScaled = true
+	TextLabel.TextSize = 14.000
+	TextLabel.TextWrapped = true
+	TextLabel.TextYAlignment = Enum.TextYAlignment.Top
+
+	local TPos = TextLabel.Position
+
+	local NewDescription = Instance.new("TextLabel")
+	NewDescription.Parent = NewFrame
+	NewDescription.Name = "Description_Frame"
+	NewDescription.BackgroundColor3 = Color3.fromRGB(45 + 232, 45 + 89, 45 + 220)
+	NewDescription.BorderColor3 = Color3.fromRGB(0 + 232, 0 + 89, 0 + 220)
+	NewDescription.BorderSizePixel = 0
+	NewDescription.ZIndex = 1
+	NewDescription.BorderMode = Enum.BorderMode.Outline
+	NewDescription.Size = UDim2.new(0, 288, 0, 32)
+	NewDescription.Font = Enum.Font.SourceSans
+	NewDescription.Text = description
+	NewDescription.TextColor3 = Color3.fromRGB(255, 255, 255)
+	NewDescription.TextScaled = true
+	NewDescription.TextWrapped = true
+	NewDescription.TextSize = 14.000
+	NewDescription.Position = UDim2.new(TPos.X.Offset, TPos.X.Offset, TPos.Y.Scale + 0.37, TPos.Y.Offset)
+
+	print("added list" .. args)
+	addListNum = addListNum + 1
+end
+rgbmult = Color3.fromRGB(Args[2], Args[3], Args[4])
+		MainFrame.BackgroundColor3 = Color3.fromRGB(487, 344, 475)
+		MainFrame.BorderColor3 = Color3.fromRGB(232, 89, 220)
+
+		ScriptName.BackgroundColor3 = Color3.fromRGB(232, 89, 220)
+		ScriptName.BorderColor3 = Color3.fromRGB(232, 89, 220)
+
+		ExecBar.BackgroundColor3 = Color3.fromRGB(277, 134, 265)
+		ExecBar.BorderColor3 = Color3.fromRGB(232, 89, 220)
+
+		CloseButton.BackgroundColor3 = Color3.fromRGB(232, 89, 220)
+		CloseButton.BorderColor3 = Color3.fromRGB(232, 89, 220)
+
+		MinimizeButton.BackgroundColor3 = Color3.fromRGB(232, 89, 220)
+		MinimizeButton.BorderColor3 = Color3.fromRGB(232, 89, 220)
+
+		SettingButton.BackgroundColor3 = Color3.fromRGB(232, 89, 220)
+		SettingButton.BorderColor3 = Color3.fromRGB(232, 89, 220)
+
+		Toggles_Frame.BackgroundColor3 = Color3.fromRGB(277, 134, 265)
+		Toggles_Frame.BorderColor3 = Color3.fromRGB(232, 89, 220)
+
+		CMDS_Frame.BackgroundColor3 = Color3.fromRGB(277, 134, 265)
+		CMDS_Frame.BorderColor3 = Color3.fromRGB(232, 89, 220)
+end
+if not Ashesmode then
+	local NewToggleList = function(title, description, defaultvalue, toggle, istextbox)
 	local NewFrame = Instance.new("Frame")
 	NewFrame.Name = "TOGFrame"
 	NewFrame.Parent = Toggles_Frame
-	NewFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	NewFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	NewFrame.BackgroundColor3 = Color3.fromRGB(232, 89, 220)
+	NewFrame.BorderColor3 = Color3.fromRGB(232, 89, 220)
 	NewFrame.Size = UDim2.new(0, 288, 0, 50)
+
 	local TextLabel = Instance.new("TextLabel")
 	TextLabel.Parent = NewFrame
 	TextLabel.Name = "TOG_Name"
-	TextLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-	TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TextLabel.BackgroundColor3 = Color3.fromRGB(262, 119, 250)
+	TextLabel.BorderColor3 = Color3.fromRGB(232, 89, 220)
 	TextLabel.BorderSizePixel = 1
 	TextLabel.ZIndex = 2
 	TextLabel.Size = UDim2.new(0, 288, 0, 18)
 	TextLabel.Font = Enum.Font.SourceSans
 	TextLabel.Text = title
-	TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabel.TextColor3 = Color3.fromRGB(487, 344, 475)
 	TextLabel.TextScaled = true
 	TextLabel.TextSize = 14.000
 	TextLabel.TextWrapped = true
+
 	local TPos = TextLabel.Position
 	local TextUdim = UDim2.new(TPos.X.Offset, TPos.X.Offset, TPos.Y.Scale + 0.37, TPos.Y.Offset)
+
 	local NewDescription = istextbox and Instance.new("TextBox") or Instance.new("TextLabel")
 	NewDescription.Parent = NewFrame
 	NewDescription.Name = "Description_Frame"
-	NewDescription.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-	NewDescription.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	NewDescription.BackgroundColor3 = Color3.fromRGB(277, 134, 265)
+	NewDescription.BorderColor3 = Color3.fromRGB(232, 89, 220)
 	NewDescription.BorderSizePixel = istextbox and 1 or 0
 	NewDescription.ZIndex = 1
 	NewDescription.BorderMode = istextbox and Enum.BorderMode.Inset or Enum.BorderMode.Outline
@@ -455,19 +549,21 @@ local NewToggleList = function(title, description, defaultvalue, toggle, istextb
 	NewDescription.Size = UDim2.new(0, 255, 0, 32)
 	NewDescription.Font = Enum.Font.SourceSans
 	NewDescription.Text = description
-	NewDescription.TextColor3 = Color3.fromRGB(255, 255, 255)
+	NewDescription.TextColor3 = Color3.fromRGB(487, 344, 475)
 	NewDescription.TextScaled = true
 	NewDescription.TextWrapped = true
 	NewDescription.TextSize = 14.000
 	NewDescription.Position = TextUdim
+
 	local TOGButton = Instance.new("ImageButton")
 	TOGButton.Name = "TOGButton"
 	TOGButton.Parent = NewFrame
-	TOGButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	TOGButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TOGButton.BackgroundColor3 = Color3.fromRGB(232, 89, 220)
+	TOGButton.BorderColor3 = Color3.fromRGB(232, 89, 220)
 	TOGButton.BorderSizePixel = 0
 	TOGButton.Position = UDim2.new(0.889166713, 0, 0.370000005, 0)
 	TOGButton.Size = UDim2.new(0, 32, 0, 32)
+
 	if defaultvalue == true then
 		TOGButton.Image = "rbxassetid://375691700"
 	elseif defaultvalue == false then
@@ -475,8 +571,10 @@ local NewToggleList = function(title, description, defaultvalue, toggle, istextb
 	elseif defaultvalue == "click" then
 		TOGButton.Image = "rbxassetid://11255462876"
 	end
+
 	if istextbox then
-		NewDescription.Text = ""; NewDescription.PlaceholderText = description
+		NewDescription.Text = ""
+		NewDescription.PlaceholderText = description
 		TOGButton.MouseButton1Click:Connect(function()
 			toggle(NewDescription.Text)
 		end)
@@ -490,6 +588,9 @@ local NewToggleList = function(title, description, defaultvalue, toggle, istextb
 			end
 		end)
 	end
+	end
+else
+
 end
 --GUI Connections
 DraggifyFrame(MainFrame)
@@ -560,6 +661,7 @@ local RegModule = nil
 
 if LocalPlayer.UserId == 187191716 then
 	UglyDisgustingOpenButton = true
+	Ashesmode = true
 end
 
 setClipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
@@ -575,6 +677,11 @@ function toClipboard(txt)
 	end
 end
 
+function addListColor()
+	for i = 1, addListNum do
+
+	end
+end
 
 local Prefix = "?"
 --Tables
@@ -4303,6 +4410,24 @@ end
 		task.spawn(function()
 			loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/main/elpme,elpme,elpme(not by me)", true))()
 		end)
+	elseif cm("rgb") then
+		rgbmult = Color3.fromRGB(Args[2], Args[3], Args[4])
+		MainFrame.BackgroundColor3 = Color3.fromRGB(255 + Args[2], 255 + Args[3], 255 + Args[4])
+		MainFrame.BorderColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
+		ScriptName.BackgroundColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
+		ScriptName.BorderColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
+		ExecBar.BackgroundColor3 = Color3.fromRGB(45 + Args[2], 45 + Args[3], 45 + Args[4])
+		ExecBar.BorderColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
+		CloseButton.BackgroundColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
+		CloseButton.BorderColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
+		MinimizeButton.BackgroundColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
+		MinimizeButton.BorderColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
+		SettingButton.BackgroundColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
+		SettingButton.BorderColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
+		Toggles_Frame.BackgroundColor3 = Color3.fromRGB(45 + Args[2], 45 + Args[3], 45 + Args[4])
+		Toggles_Frame.BorderColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
+		CMDS_Frame.BackgroundColor3 = Color3.fromRGB(45 + Args[2], 45 + Args[3], 45 + Args[4])
+		CMDS_Frame.BorderColor3 = Color3.fromRGB(0 + Args[2], 0 + Args[3], 0 + Args[4])
 	elseif cm("goto") or cm("to") then
 		local DaPlayer = PlrFromArgs(Args[2], false)
 		if DaPlayer then
@@ -11071,6 +11196,8 @@ task.spawn(function()
 	AddList("permadmin / padmin [plr]", "Change perm admin prefix (default is !)", false)
 	AddList("unpermadmin / unpadmin [plr, all]", "Change perm admin prefix (default is !)", false)
 	AddList("unpadmin", "Change perm admin prefix (default is !)", false)
+	AddList("gknife", "gives yo a prison life grab knife script", false)
+	AddList("rgb [R, G, B]", "changes ui color via adding", false)
 	--Toggles
 	NewToggleList("LocalPlayer_RunSpeed", "Default value is: 24", "click", function(arg)
 		local str = tonumber(arg)
