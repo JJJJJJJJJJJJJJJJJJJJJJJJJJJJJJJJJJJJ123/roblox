@@ -1,6 +1,6 @@
 Ashesmode = false
 
-if LocalPlayer.UserId == 187191716 then
+if game.Players.LocalPlayer.UserId == 187191716 then
 	Ashesmode = true
 end
 
