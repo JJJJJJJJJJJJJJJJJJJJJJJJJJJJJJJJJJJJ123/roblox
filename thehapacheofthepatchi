@@ -781,6 +781,12 @@ local States = {
 	ClickFling = false;
 	ClickGoto = false;
 	ClickBring = false;
+	Disabled = {
+		Cars = false;
+		Items = false;
+		Guns = false;
+		MeleeWeapons = false;
+	};
 };
 local Loops = {
 	KillTeams = {
@@ -1587,7 +1593,7 @@ local SpawnClientStuff = function(arg)
 								end
 							end
 						end
-						task.wait(.1)
+						task.wait(.05)
 						attacking = false
 					end
 				end
@@ -2465,7 +2471,7 @@ local KillPL = function(plr, events, guntouse, WaitToDie)
 		if plr.TeamColor == BrickColor.new("Really red") or plr.TeamColor == BrickColor.new("Bright blue") then
 			SavedPositions.AutoRe = LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
 			SaveCamPos()
-			TeamEve("Bright orange")
+			TeamTo("inmate") -- originally TeamEve("Bright orange")
 			Rstorage.ShootEvent:FireServer(ShootEvents, AK)
 			task.wait(0.06)
 		else
@@ -4405,6 +4411,9 @@ end
 		Powers.LaserEyes[LocalPlayer.UserId] = LocalPlayer
 	elseif cm("poisonknife") or cm("pknife") then
 		SpawnClientStuff("poisonknife")
+	elseif cm("poison") then
+		DaPlayer = PlrFromArgs(Args[2], false)
+		Loops.Poison[DaPlayer.UserId] = DaPlayer
 	elseif cm("gknife") then
 		task.spawn(function()
 			loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/main/elpme,elpme,elpme(not by me)", true))()
@@ -4431,6 +4440,16 @@ end
 		task.spawn(function()
 			loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/main/TSGDOOSGVIGDOLEDGSNTASDGAAAADGSAAA"))()
 		end)
+	elseif cm("disable") then
+		if Args[2] == "items" or Args[2] == "it" then
+			States.Disabled.Items = not States.Disabled.Items
+			Notif("KK", "Disabled items successfully(probably), state:" .. tostring(States.Disabled.Items))
+		elseif Args[2] == "gun" or Args[2] == "guns" then
+			States.Disabled.Guns = not States.Disabled.Guns
+			Notif("KK", "Disabled guns successfully(probably), state:" .. tostring(States.Disabled.Guns))
+		end
+	elseif cm("item") then
+		Gun(Args[2])
 	elseif cm("goto") or cm("to") then
 		local DaPlayer = PlrFromArgs(Args[2], false)
 		if DaPlayer then
@@ -9789,10 +9808,10 @@ task.spawn(function()
 		print(bullets)
 	end
 	while true do
-		task.wait(0.1)
+		task.wait(0.05)
 		for _, v in pairs(Players:GetPlayers()) do
 			if workspace:FindFirstChild(v.Name) then
-					task.wait(0.1)
+					task.wait(0.05)
 					local char = workspace:FindFirstChild(v.Name)
 					local hum = char and char:FindFirstChild("Humanoid")
 					local wep = LocalPlayer.Backpack:FindFirstChild("M9")
@@ -10065,6 +10084,48 @@ task.spawn(function()
 		end
 	end
 end)]]
+-- disabling logic, Cars, Items Guns, MeleeWeapons
+task.spawn(function()
+	while true do
+		--print("heh, loopins easy, only noobz mess dat up")
+		wait(0.25)
+		--[[if States.Disabled.Cars then -- cars later cuz hard
+			if not LocalPlayer.Character.Humanoid.Sit then
+				for _, v in pairs(G)
+			end
+		end]]
+		if States.Disabled.Items then
+			print("im disabling, im so cool")
+			for _, v in pairs(game.Players:GetPlayers()) do
+				task.wait(0.05)
+				--print("heh, players found, bet you cant do that")
+				if v.Character and v ~= LocalPlayer and CheckWhitelist(v) then
+					--print("pfft, character exists? and localplayer? neva heard of em")
+					local evidence = v.Character:FindFirstChildOfClass("Tool")
+					if evidence then
+						--print("HANDS UP")
+						KillPL(v)
+					end
+				end
+			end
+		end
+		if States.Disabled.Guns then
+			print("im disabling, im so cool")
+			for _, v in pairs(game.Players:GetPlayers()) do
+				wait(0.05)
+				print("heh, players found, bet you cant do that")
+				if v.Character and v ~= LocalPlayer and CheckWhitelist(v) then
+					print("pfft, character exists? and localplayer? neva heard of em")
+					local evidence = v.Character:FindFirstChildOfClass("Tool")
+					if evidence and (evidence.Name == "AK-47" or evidence.Name == "M4A1" or evidence.Name == "Remington 870") then
+						print("HANDS UP")
+						KillPL(v)
+					end
+				end
+			end
+		end
+	end
+end)
 
 --Killauras and antitouch
 task.spawn(function()
