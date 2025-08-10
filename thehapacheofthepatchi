@@ -1,3 +1,22 @@
+-- Notes
+-- punch deals 11 damage
+-- meleeevent deals 11 damage
+-- Player sync/sharing sys is potentially in piss admin
+
+-- Tasks
+-- FASTER RESPAWN PLEASEEEEEE
+-- add the sync feature so other players that use this script and maybe piss admin can see stuff too! or utilize it in some way
+-- tase anim id: https://roblox.com/library/180435571
+Settings = {}
+loadSettings = function()
+	local settings = readfile("pladmin settings.json")
+	Settings = game:GetService("HttpService"):JSONDecode(settings)
+end
+saveSettings = function()
+	writefile("pladmin settings.json", game:GetService("HttpService"):JSONEncode(Settings))
+end
+
+shitlol = false
 cooked = false
 if game.Players.LocalPlayer:IsFriendsWith(game.Players:GetUserIdFromNameAsync("3p1c4g3nt")) then
     cooked = true
@@ -17,7 +36,7 @@ Execution_Runtime = tick()
 PLadmin_Settings = { 
 	DefaultPrefix = "?"; 
 	JoinNotify = false; 
-	AutoRespawn = false; --Automatically loadcharacter when dying 
+	AutoRespawn = true; --Automatically loadcharacter when dying 
 	AntiVoid = true; --Automatically teleport up when falling into void 
 	AntiTase = false; --Prevents you from being tased (100% no getconnections used because its absolute garbage) 
 	AntiArrest = false; --Prevents you from being arrested (100% no getconnections used because its absolute garbage) 
@@ -579,6 +598,8 @@ local NewToggleList = function(title, description, defaultvalue, toggle, istextb
 		NewDescription.Text = ""; NewDescription.PlaceholderText = description
 		TOGButton.MouseButton1Click:Connect(function()
 			toggle(NewDescription.Text)
+			wait(0.1)
+			saveSettings()
 		end)
 	else
 		TOGButton.MouseButton1Click:Connect(function()
@@ -588,6 +609,8 @@ local NewToggleList = function(title, description, defaultvalue, toggle, istextb
 			else
 				TOGButton.Image = "rbxassetid://5100484851"
 			end
+			wait(0.1)
+			saveSettings()
 		end)
 	end
 end
@@ -786,6 +809,7 @@ local States = {
 		Items = false;
 		Guns = false;
 		MeleeWeapons = false;
+		CopItems = false;
 	};
 };
 local Loops = {
@@ -848,6 +872,7 @@ local Loops = {
 	Plague = {};
 	Cure = {};
 	Poison = {};
+	Smite = {};
 };
 local Powers = {
 	Killauras = {};
@@ -863,7 +888,11 @@ local Powers = {
 	DeathNuke = {};
 	LaserEyes = {};
 };
-local Settings = {
+local Attributes = {
+	toolOneshot = {};
+}
+if not isfile("pladmin settings.json") then
+Settings = {
 	KillauraThreshold = 17;
 	JoinNotify = false;
 	PrintDebug = string.sub(LocalPlayer.Name, 1, 5) == "TheDestroyer" or string.sub(LocalPlayer.Name, 1, 9) == "devang099";
@@ -873,6 +902,9 @@ local Settings = {
 		HiddenArrest = true;
 		AutoDumpCar = true;
 		OldItemMethod = false;
+		playFair = false;
+		oldEdge = false;
+		mEdge = false;
 	};
 	Ranked = {
 		AutoWhitelist = false;
@@ -898,6 +930,11 @@ local Settings = {
 		CustomCmds = true;
 	};
 };
+wait(0.1)
+--saveSettings()
+else
+loadSettings()
+end
 local RankedPlrs = {};
 local Whitelisted = {};
 local Connections = {};
@@ -2035,6 +2072,7 @@ local BringPL = function(BringFrom, Destination, isCFrame, donotusecar, dontbrea
 		end
 	end
 end
+
 --Arrest/Tase
 local ArrestPL = function(args, savepos, isHidden)
 	SavedPositions.ArrestPlr = LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
@@ -2426,7 +2464,7 @@ local ShootKill = function(plr, amount, guntouse, hitpart)
 			CreateClientRay(EA)
 			Rstorage.ShootEvent:FireServer(EA, HasGun)
 			Rstorage.ReloadEvent:FireServer(HasGun)
-			task.wait(.1)
+			task.wait(.05) -- originally task.wait(.1)
 			if plr.Character and plr.Character:FindFirstChildOfClass("Humanoid").Health == 0 then
 				break
 			end
@@ -2484,6 +2522,19 @@ local KillPL = function(plr, events, guntouse, WaitToDie)
 	if WaitToDie then
 		repeat task.wait() until not plr.Character or not plr.Character:FindFirstChildOfClass("Humanoid") or plr.Character:FindFirstChildOfClass("Humanoid").Health == 0 or plr.Character:FindFirstChildWhichIsA("ForceField")
 	end
+end
+
+meleeDamage = function(plr, dmg)
+	opos = LocalPlayer.Character.HumanoidRootPart.CFrame
+	task.wait(0.05)
+	LocTP(plr.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -10, 0))
+	wait(0.1)
+	for i=1,dmg do
+		task.wait()
+		LocTP(plr.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -10, 0))
+		MeleEve(plr)
+	end
+	LocTP(opos)
 end
 
 local TableKill = function(tables)
@@ -4240,7 +4291,7 @@ end
 			Loops.GuardBlacklist[DaPlayer.UserId] = DaPlayer
 			Notif("KK", "Blacklisted " .. DaPlayer .. " from becoming a guard")
 		else
-			Notif("Error ):", "Player seems to be invalid")
+			Notif("Error :(", "Player seems to be invalid")
 		end
 	elseif cm("whitelistguard") or cm("wlg") then
 		local DaPlayer = PlrFromArgs(Args[2], nil)
@@ -4254,7 +4305,7 @@ end
 			Loops.GuardBlacklist[DaPlayer.UserId] = nil
 			Notif("KK", "Allowed " .. DaPlayer .. " to become a guard")
 		else
-			Notif("Error ):", "Invalid player")
+			Notif("Error :(", "Invalid player")
 		end
 	elseif cm("blacklistcriminal") or cm("blc") then
 		local DaPlayer = PlrFromArgs(Args[2], nil)
@@ -4265,7 +4316,7 @@ end
 			Loops.CriminalBlacklist[DaPlayer.UserId] = DaPlayer
 			Notif("KK", "Blacklisted " .. DaPlayer .. " from becoming a criminal")
 		else
-			Notif("Error ):", "Player seems to be invalid")
+			Notif("Error :(", "Player seems to be invalid")
 		end
 	elseif cm("whitelistcriminal") or cm("wlc") then
 		local DaPlayer = PlrFromArgs(Args[2], nil)
@@ -4279,7 +4330,7 @@ end
 			Loops.CriminalBlacklist[DaPlayer.UserId] = nil
 			Notif("KK", "Allowed " .. DaPlayer .. " to become a criminal")
 		else
-			Notif("Error ):", "Invalid player")
+			Notif("Error :(", "Invalid player")
 		end
 	elseif cm("nexin") then
 		TeamTo("inmate")
@@ -4353,7 +4404,7 @@ end
 		if whoran == nil or whoran.UserId == AwesomeSauceLocalPlayer.UserId then
 			plr = PlrFromArgs(Args[2], false)
 			if plr == nil then
-				Notif("Error ):", "Invalid player")
+				Notif("Error :(", "Invalid player")
 			else
 				--if isfile then
 				--	if isfile("prizzlifePermAdminList") then
@@ -4371,7 +4422,7 @@ end
 						writefile("prizzlifePermAdminList", table.concat(permAdmin, "\n"))
 					end
 				--else
-				--	Notif("Error ):", "Shitty executor or weirdly named functions")
+				--	Notif("Error :(", "Shitty executor or weirdly named functions")
 				--end
 			end
 			Notif("KK", "Gave permadmin to " .. plr.Name)
@@ -4387,7 +4438,7 @@ end
 			end
 			plr = PlrFromArgs(Args[2], false)
 			if plr == nil then
-				Notif("Error ):", "Invalid player")
+				Notif("Error :(", "Invalid player")
 			else
 				local removed = false
 				for i, id in ipairs(permAdmin) do
@@ -4447,9 +4498,363 @@ end
 		elseif Args[2] == "gun" or Args[2] == "guns" then
 			States.Disabled.Guns = not States.Disabled.Guns
 			Notif("KK", "Disabled guns successfully(probably), state:" .. tostring(States.Disabled.Guns))
+		elseif Args[2] == "meleeweapons" or Args[2] == "mweapons" or Args[2] == "mw" or Args[2] == "mweapons" then
+			States.Disabled.MeleeWeapons = not States.Disabled.MeleeWeapons
+			Notif("KK", "Disabled guns successfully(probably), state:" .. tostring(States.Disabled.MeleeWeapons))
+		elseif Args[2] == "copitems" then
+			States.Disabled.CopItems = not States.Disabled.CopItems
+			Notif("KK", "Disabled guns successfully(probably), state:" .. tostring(States.Disabled.CopItems)) -- maybe bugs check later
 		end
 	elseif cm("item") then
 		Gun(Args[2])
+	elseif cm("customgun") or cm("lol") then
+		argh = string.lower(Args[2])
+		if argh == "lagger" then
+			Gun("M9")
+			wait(3)
+			local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool") or LocalPlayer.Backpack.M9 or LocalPlayer.Backpack.Lagger
+			--tool.Name = "Lagger"
+			if tool then
+				if tool:FindFirstChild("GunStates") then
+					local stat = require(tool.GunStates)
+					stat.Damage = 9999999
+					stat.FireRate = 0
+					stat.Range = 0
+					stat.MaxAmmo = 9999
+					stat.StoredAmmo = 0
+					stat.AmmoPerClip = 0
+					stat.CurrentAmmo = math.huge
+					stat.AutoFire = true
+					stat.Bullets = 0
+					Tasks.ReloadGun(tool)
+					task.wait(.1)
+					LAction("unequip")
+					task.wait(.1)
+					LAction("equip", tool --[[LocalPlayer.Backpack:FindFirstChild("M9")]])
+					Notif("OK", "Applied all gun mods to " .. tool.Name .. ".")
+				else
+					Notif("Error", "Tool is not a gun.")
+				end
+			else
+				Notif("Error :(", "idk prob lag lulz or u held the tool")
+			end
+		elseif argh == "wtf" then
+			print("WTF")
+			Gun("AK-47")
+			wait(0.1)
+			local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool") or LocalPlayer.Backpack["AK-47"] or LocalPlayer.Backpack.WTF
+			--tool.Name = "WTF"
+			if tool then
+				print("its a tool!")
+				if tool:FindFirstChild("GunStates") then
+					print("we got the states in lockdown")
+					local stat = require(tool.GunStates)
+					stat.Damage = 100
+					stat.FireRate = 0.01
+					stat.Range = 9999
+					stat.Spread = 50
+					stat.ReloadTime = 0.05
+					stat.MaxAmmo = 989
+					stat.StoredAmmo = 1
+					stat.AmmoPerClip = 10
+					stat.CurrentAmmo = math.huge
+					stat.AutoFire = true
+					stat.Bullets = 10
+					Tasks.ReloadGun(tool)
+					task.wait(.1)
+					LAction("unequip")
+					task.wait(.1)
+					LAction("equip", tool)
+					Notif("OK", "Applied all gun mods to " .. tool.Name .. ".")
+				else
+					Notif("Error", "Tool is not a gun.")
+				end
+			else
+				Notif("Error :(", "idk prob lag lulz or u held the tool")
+			end
+		elseif argh == "hitta" then
+			print("WTF")
+			Gun("Remington 870")
+			wait(0.1)
+			local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool") or LocalPlayer.Backpack["Remington 870"] or LocalPlayer.Backpack["BIG HITTA"]
+			--tool.Name = "BIG HITTA"
+			if tool then
+				print("its a tool!")
+				if tool:FindFirstChild("GunStates") then
+					print("we got the states in lockdown")
+					local stat = require(tool.GunStates)
+					stat.Damage = 100
+					stat.FireRate = 0.01
+					stat.Range = 9999
+					stat.Spread = 50
+					stat.ReloadTime = 4
+					stat.MaxAmmo = 0.5
+					stat.StoredAmmo = 1
+					stat.AmmoPerClip = 1
+					stat.CurrentAmmo = math.huge
+					stat.AutoFire = true
+					stat.Bullets = 500
+					Tasks.ReloadGun(tool)
+					task.wait(.1)
+					LAction("unequip")
+					task.wait(.1)
+					LAction("equip", tool)
+					Notif("OK", "Applied all gun mods to " .. tool.Name .. ".")
+				else
+					Notif("Error", "Tool is not a gun.")
+				end
+			else
+				Notif("Error :(", "idk prob lag lulz or u held the tool")
+			end
+		elseif argh == "s" then
+			Gun("nil")
+			Notif("skibi", "not toilet")
+		elseif argh == "laser" then -- gotta know why it causes lag now
+			Gun("AK-47")
+			wait(0.1)
+			local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool") or LocalPlayer.Backpack["AK-47"]
+			if tool then
+				if tool:FindFirstChild("GunStates") then
+					local stat = require(tool.GunStates)
+					--stat.Damage = 11;
+    				stat.Description = "Remember to put a description here BEFORE the game is published -Me";
+    				stat.MaxAmmo = 100;
+    				stat.CurrentAmmo = 100;
+    				stat.StoredAmmo = 600;
+    				stat.FireRate = 0.05;
+    				stat.AutoFire = true;
+    				stat.Range = 800;
+    				stat.Spread = 0; -- 14
+    				stat.ReloadTime = 2;
+    				stat.Bullets = 1;
+					stat.ReloadAnim = "ReloadMagazine";
+    				stat.ShootAnim = "ShootBullet";
+    				stat.HoldAnim = "Hold";
+    				stat.FireSoundId = "http://www.roblox.com/asset/?id=2934888736";
+    				stat.SecondarySoundId = nil;
+    				stat.ReloadSoundId = "http://www.roblox.com/asset/?id=2934887229";
+					LAction("unequip")
+					task.wait(.1)
+					LAction("equip", tool)
+					Notif("OK", "Applied all gun mods to " .. tool.Name .. ".")
+					--print("now this stupid bullshit fails")
+					Attributes.toolOneshot[tool] = 2
+					tool.Equipped:Connect(function()
+						shitlol = Attributes.toolOneshot[tool]
+						--print("stupidest shit ever is running")
+					end)
+					--print("roblox scripting sucks")
+					tool.Unequipped:Connect(function()
+						shitlol = false
+					end)
+					--print("bullshit")
+				end
+			end
+		end
+	elseif cm("ify") then
+		local tool = LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
+		local stat = require(tool.GunStates)
+		if Args[2] == "ak" then
+			stat.Damage = 11
+			stat.Description = "Remember to put a description here BEFORE the game is published -Me"
+			stat.MaxAmmo = 30
+			stat.CurrentAmmo = 30
+			stat.StoredAmmo = 600
+			stat.FireRate = 0.1
+			stat.AutoFire = true
+			stat.Range = 800
+			stat.Spread = 14
+			stat.ReloadTime = 2
+			stat.Bullets = 1
+			stat.ReloadAnim = "ReloadMagazine"
+			stat.ShootAnim = "ShootBullet"
+			stat.HoldAnim = "Hold"
+			stat.FireSoundId = "http://www.roblox.com/asset/?id=2934888736"
+			stat.SecondarySoundId = nil
+			stat.ReloadSoundId = "http://www.roblox.com/asset/?id=2934887229"
+			LAction("unequip")
+			task.wait(.1)
+			LAction("equip", tool)
+		elseif Args[2] == "m9" then
+			stat.Damage = 10
+			stat.Description = "Remember to put a description here BEFORE the game is published -Me"
+			stat.MaxAmmo = 15
+			stat.CurrentAmmo = 15
+			stat.StoredAmmo = 100
+			stat.FireRate = 0.08
+			stat.AutoFire = false
+			stat.Range = 600
+			stat.Spread = 11
+			stat.ReloadTime = 2
+			stat.Bullets = 1
+			stat.ReloadAnim = "ReloadMagazine"
+			stat.ShootAnim = "ShootBullet"
+			stat.HoldAnim = "Hold"
+			stat.FireSoundId = "http://www.roblox.com/asset/?id=2934888024"
+			stat.SecondarySoundId = nil
+			stat.ReloadSoundId = "http://www.roblox.com/asset/?id=2934887229"
+			LAction("unequip")
+			task.wait(.1)
+			LAction("equip", tool)
+		elseif Args[2] == "rem" then
+			stat.Damage = 15;
+    		stat.Description = "Remember to put a description here BEFORE the game is published -Me";
+   			stat.MaxAmmo = 6;
+   			stat.CurrentAmmo = 6;
+   			stat.StoredAmmo = 600;
+    		stat.FireRate = 0.8;
+   			stat.AutoFire = false;
+    		stat.Range = 400;
+    		stat.Spread = 3;
+    		stat.ReloadTime = 4;
+    		stat.Bullets = 5;
+    		stat.ReloadAnim = "ReloadShells";
+    		stat.ShootAnim = "ShootShell";
+    		stat.HoldAnim = "Hold";
+    		stat.FireSoundId = "http://www.roblox.com/asset/?id=2934889760";
+    		stat.SecondarySoundId = "http://www.roblox.com/asset/?id=255061173";
+    		stat.ReloadSoundId = "http://www.roblox.com/asset/?id=2934888952";
+			LAction("unequip")
+			task.wait(.1)
+			LAction("equip", tool)
+		elseif Args[2] == "m4" then
+			stat.Damage = 11;
+			stat.Description = "Remember to put a description here BEFORE the game is published -Me";
+			stat.MaxAmmo = 30;
+			stat.CurrentAmmo = 30;
+			stat.StoredAmmo = 600;
+			stat.FireRate = 0.0875;
+			stat.AutoFire = true;
+			stat.Range = 800;
+			stat.Spread = 18;
+			stat.ReloadTime = 2;
+			stat.Bullets = 1;
+			stat.ReloadAnim = "ReloadMagazine";
+			stat.ShootAnim = "ShootBullet";
+			stat.HoldAnim = "Hold";
+			stat.FireSoundId = "http://www.roblox.com/asset/?id=2934888536";
+			stat.SecondarySoundId = nil;
+			stat.ReloadSoundId = "http://www.roblox.com/asset/?id=2934887229";
+			LAction("unequip")
+			task.wait(.1)
+			LAction("equip", tool)
+		elseif Args[2] == "snip" or Args[2] == "sniper" then -- approximate
+			stat.Damage = 50;
+    		stat.Description = "Remember to put a description here BEFORE the game is published -Me";
+   			stat.MaxAmmo = 10;
+   			stat.CurrentAmmo = 10;
+   			stat.StoredAmmo = 600;
+    		stat.FireRate = 1;
+   			stat.AutoFire = false;
+    		stat.Range = 2000;
+    		stat.Spread = 3;
+    		stat.ReloadTime = 4;
+			if Args[2] == "snip" then -- old damage system
+    			stat.Bullets = 20;
+			elseif Args[2] == "sniper" then -- new damage system
+				Attributes.toolOneshot[tool] = 20
+				tool.Equipped:Connect(function()
+					shitlol = Attributes.toolOneshot[tool]
+				end)
+				tool.Unequipped:Connect(function()
+					shitlol = false
+				end)
+			end
+    		stat.ReloadAnim = "ReloadShells";
+    		stat.ShootAnim = "ShootShell";
+    		stat.HoldAnim = "Hold";
+    		stat.FireSoundId = "http://www.roblox.com/asset/?id=2934889760";
+    		stat.SecondarySoundId = "http://www.roblox.com/asset/?id=255061173";
+    		stat.ReloadSoundId = "http://www.roblox.com/asset/?id=2934888952";
+			LAction("unequip")
+			task.wait(.1)
+			LAction("equip", tool)
+		elseif Args[2] == "taser" then
+			stat.Description = "Remember to put a description here BEFORE the game is published -Me";
+    		stat.MaxAmmo = 1;
+    		stat.CurrentAmmo = 1;
+    		stat.Range = 100;
+    		stat.Spread = 30;
+    		stat.ReloadTime = 3;
+    		stat.Bullets = 1;
+    		stat.ReloadAnim = "ReloadMagazine";
+    		stat.ShootAnim = "ShootBullet";
+    		stat.HoldAnim = "Hold";
+    		stat.FireSoundId = "http://www.roblox.com/asset/?id=2934889941";
+    		stat.SecondarySoundId = nil;
+   			stat.ReloadSoundId = "http://www.roblox.com/asset/?id=82273261";
+			LAction("unequip")
+			task.wait(.1)
+			LAction("equip", tool)
+		elseif Args[2] == "m16" then -- also approximate, i dont have access to aestheticals GUI test game ):
+			stat.Damage = 12;
+			stat.Description = "Remember to put a description here BEFORE the game is published -Me";
+			stat.MaxAmmo = 30;
+			stat.CurrentAmmo = 30;
+			stat.StoredAmmo = 600;
+			stat.FireRate = 0.095;
+			stat.AutoFire = true;
+			stat.Range = 600;
+			stat.Spread = 18;
+			stat.ReloadTime = 2;
+			stat.Bullets = 1;
+			stat.ReloadAnim = "ReloadMagazine";
+			stat.ShootAnim = "ShootBullet";
+			stat.HoldAnim = "Hold";
+			stat.FireSoundId = "http://www.roblox.com/asset/?id=2934888536";
+			stat.SecondarySoundId = nil;
+			stat.ReloadSoundId = "http://www.roblox.com/asset/?id=2934887229";
+			LAction("unequip")
+			task.wait(.1)
+			LAction("equip", tool)
+		elseif Args[2] == "m249" then
+			stat.Damage = 10;
+			stat.Description = "Remember to put a description here BEFORE the game is published -Me";
+			stat.MaxAmmo = 100;
+			stat.CurrentAmmo = 100;
+			stat.StoredAmmo = 600;
+			stat.FireRate = 0.103;
+			stat.AutoFire = true;
+			stat.Range = 600;
+			stat.Spread = 18;
+			stat.ReloadTime = 2;
+			stat.Bullets = 1;
+			stat.ReloadAnim = "ReloadMagazine";
+			stat.ShootAnim = "ShootBullet";
+			stat.HoldAnim = "Hold";
+			stat.FireSoundId = "http://www.roblox.com/asset/?id=2934888536";
+			stat.SecondarySoundId = nil;
+			stat.ReloadSoundId = "http://www.roblox.com/asset/?id=2934887229";
+			LAction("unequip")
+			task.wait(.1)
+			LAction("equip", tool)
+		end
+	elseif cm("mdmg") or cm("meleedamage") then
+		opos = LocalPlayer.Character.HumanoidRootPart.CFrame
+		plr = PlrFromArgs(Args[2], false)
+		amt = tonumber(Args[3]) or 1
+		if amt and plr.Character.HumanoidRootPart then
+			LocTP(plr.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -10, 0))
+			wait(0.1)
+			for i=1,amt do
+				task.wait()
+				LocTP(plr.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -10, 0))
+				MeleEve(plr)
+			end
+			LocalPlayer.Character.HumanoidRootPart.CFrame = opos
+		elseif plr.Character.HumanoidRootPart then
+			while plr.Character.Humanoid.Health > 0 do
+				wait(0.05)
+				LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = plr.Character:FindFirstChild("HumanoidRootPart").CFrame
+				MeleEve(plr)
+			end
+			LocalPlayer.Character.HumanoidRootPart.CFrame = opos
+		end
+	elseif cm("smite") or cm("strike") then
+		plr = PlrFromArgs(Args[2], false)
+		if plr ~= LocalPlayer then
+			Loops.Smite[plr.UserId] = plr
+		end
 	elseif cm("goto") or cm("to") then
 		local DaPlayer = PlrFromArgs(Args[2], false)
 		if DaPlayer then
@@ -9276,7 +9681,7 @@ local OnRankedCommand = function(text, ranked)
 	end
 end
 
-for i,v in pairs(Players:GetPlayers()) do
+--[[for i,v in pairs(Players:GetPlayers()) do -- old ranked msg sys
 	if not (v == LocalPlayer) then
 		ChatCon[v.UserId] = v.Chatted:Connect(function(msg)
 			if RankedPlrs[v.UserId] then
@@ -9284,7 +9689,33 @@ for i,v in pairs(Players:GetPlayers()) do
 			end
 		end)
 	end
-end
+end]]
+--game:GetService("TextChatService").OnIncomingMessage = function(message)
+game:GetService("TextChatService").MessageReceived:Connect(function(message)
+	local textSource = message.TextSource
+	if not textSource then return end -- system messages or nil sender
+
+	local userId = textSource.UserId
+	local player = Players:GetPlayerByUserId(userId)
+	if not player then return end
+
+	if not ChatCon[userId] then
+		ChatCon[userId] = true -- mark as connected
+	end
+
+	--Notif("chat connected shit", "", 1)
+
+	if RankedPlrs[userId] then
+		local msg = message.Text
+		--Notif("string subscribe " .. string.sub(msg, 1, #permAdminPrefix), "", 1)
+
+		-- Optional: check prefix match
+		if string.sub(msg, 1, #Prefix) == Prefix then
+			--Notif("im running the cmd", "", 1)
+			OnRankedCommand(msg, player)
+		end
+	end
+end)
 --[[ permadmin inefficent
 for i,v in pairs(Players:GetPlayers()) do
 	--if v == LocalPlayer then
@@ -9327,7 +9758,8 @@ end)]]
 -- permadmin
 ChatCon = {}
 
-game:GetService("TextChatService").OnIncomingMessage = function(message) -- awesome efficient and better permadmin
+--game:GetService("TextChatService").OnIncomingMessage = function(message) -- awesome efficient and better permadmin
+game:GetService("TextChatService").MessageReceived:Connect(function(message) -- awesome efficient and better permadmin
 	local textSource = message.TextSource
 	if not textSource then return end -- system messages or nil sender
 
@@ -9351,12 +9783,13 @@ game:GetService("TextChatService").OnIncomingMessage = function(message) -- awes
 			OnCommand(msg, player)
 		end
 	end
-end
+end)
 
 -- cooked 💀
 ChatCon = {}
 
-game:GetService("TextChatService").OnIncomingMessage = function(message) -- awesome efficient and better permadmin
+--game:GetService("TextChatService").OnIncomingMessage = function(message) -- awesome efficient and better permadmin
+game:GetService("TextChatService").MessageReceived:Connect(function(message) -- awesome efficient and better permadmin
 	local textSource = message.TextSource
 	if not textSource then return end -- system messages or nil sender
 
@@ -9382,7 +9815,7 @@ game:GetService("TextChatService").OnIncomingMessage = function(message) -- awes
 			end
 		end
 	end
-end
+end)
 
 Connections.PlayerAdded = Players.PlayerAdded:Connect(function(plr)
 	if Loops.Kill[plr.UserId] then
@@ -9699,7 +10132,9 @@ Connections.InputBegan = game:GetService("UserInputService").InputBegan:Connect(
 	if input.KeyCode == Enum.KeyCode.F and not textBoxHasFocus then
 		States.IsHoldingF = true
 		if States.PunchCD or Toggles.Onepunch or Toggles.PunchAura or States.LoudPunch then
-			pcall(VirtualPunch)
+			if not Settings.User.playFair then
+				pcall(VirtualPunch)
+			end
 		end
 		if not States.PunchCD then
 			States.PunchCD = true; wait(0.9); States.PunchCD = nil
@@ -9797,15 +10232,34 @@ end)
 -- Edge command yeah
 task.spawn(function()
 	function DoMaxDmg(player, hp, weapon)
-		bullets = math.floor(hp / 15)
-		if hp % 15 then
-			bullets = bullets - 0
+		if not Settings.User.mEdge then
+			bullets = math.floor(hp / 15)
+			if hp % 15 then
+				bullets = bullets - 0
+			end
+			bullets = math.max(bullets, 0)
+			pcall(function()
+				KillPL(player, bullets, weapon)
+			end)
+			print(bullets)
+		else
+			bullets = math.floor(hp / 11)
+			if hp % 11 then
+				bullets = bullets - 0
+			end
+			bullets = math.max(bullets, 0)
+			pcall(function()
+				--[[LocTP(player.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -10, 0))
+				wait(0.1)
+				for i=1,bullets do
+					task.wait()
+					LocTP(player.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -10, 0))
+					MeleEve(player)
+				end]]
+				meleeDamage(player, bullets)
+			end)
+			print(bullets)
 		end
-		bullets = math.max(bullets, 0)
-		pcall(function()
-			KillPL(player, bullets, weapon)
-		end)
-		print(bullets)
 	end
 	while true do
 		task.wait(0.05)
@@ -9818,35 +10272,51 @@ task.spawn(function()
 					if hum and game:GetService("Workspace")[v.Name].Humanoid.Health > 15 then
 						if Loops.Edge[v.UserId] then
 							print("im currently attempting to killpl")
-							Gun("M9")
-							if wep then
-								DoMaxDmg(v, game:GetService("Workspace")[v.Name].Humanoid.Health, "M9")
+							if not Settings.User.mEdge then Gun("M9") end
+							if wep or Settings.User.mEdge then
+								if not Settings.User.oldEdge then
+									DoMaxDmg(v, game:GetService("Workspace")[v.Name].Humanoid.Health, "M9")
+								else
+									KillPL(v, 1, "M9")
+								end
 								-- Rstorage.ReloadEvent:FireServer(LocalPlayer.Backpack["M9"])
 							end
 						end
 						if Loops.EdgeTeam.Inmates == true then
 							if v.Team and v.Team.Name == "Inmates" and CheckWhitelist(v) then
-								Gun("M9")
-								if wep then
-									DoMaxDmg(v, game:GetService("Workspace")[v.Name].Humanoid.Health, "M9")
+								if not Settings.User.mEdge then Gun("M9") end
+								if wep or Settings.User.mEdge then
+									if not Settings.User.mEdge then
+										DoMaxDmg(v, game:GetService("Workspace")[v.Name].Humanoid.Health, "M9")
+									elseif v.Character.Humanoid.Health > 15 then
+										KillPL(v, 1, "M9")
+									end
 								--	Rstorage.ReloadEvent:FireServer(LocalPlayer.Backpack["M9"])
 								end
 							end
 						end
 						if Loops.EdgeTeam.Criminals == true and CheckWhitelist(v) then
 							if v.Team and v.Team.Name == "Criminals" then
-								Gun("M9")
-								if wep then
-									DoMaxDmg(v, game:GetService("Workspace")[v.Name].Humanoid.Health, "M9")
+								if not Settings.User.mEdge then Gun("M9") end
+								if wep or Settings.User.mEdge then
+									if not Settings.User.oldEdge then
+										DoMaxDmg(v, game:GetService("Workspace")[v.Name].Humanoid.Health, "M9")
+									elseif v.Character.Humanoid.Health > 15 then
+										KillPL(v, 1, "M9")
+									end
 								--	Rstorage.ReloadEvent:FireServer(LocalPlayer.Backpack["M9"])
 								end
 							end
 						end
 						if Loops.EdgeTeam.Guards == true and CheckWhitelist(v) then
 							if v.Team and v.Team.Name == "Guards" then
-								Gun("M9")
-								if wep then
-									DoMaxDmg(v, game:GetService("Workspace")[v.Name].Humanoid.Health, "M9")
+								if not Settings.User.mEdge then Gun("M9") end
+								if wep or Settings.User.mEdge then
+									if not Settings.User.oldEdge then
+										DoMaxDmg(v, game:GetService("Workspace")[v.Name].Humanoid.Health, "M9")
+									elseif v.Character.Humanoid.Health > 15 then
+										KillPL(v, 1, "M9")
+									end
 								--	Rstorage.ReloadEvent:FireServer(LocalPlayer.Backpack["M9"])
 								end
 							end
@@ -10110,19 +10580,139 @@ task.spawn(function()
 			end
 		end
 		if States.Disabled.Guns then
-			print("im disabling, im so cool")
+			--print("im disabling, im so cool")
 			for _, v in pairs(game.Players:GetPlayers()) do
 				wait(0.05)
-				print("heh, players found, bet you cant do that")
+				--print("heh, players found, bet you cant do that")
 				if v.Character and v ~= LocalPlayer and CheckWhitelist(v) then
-					print("pfft, character exists? and localplayer? neva heard of em")
-					local evidence = v.Character:FindFirstChildOfClass("Tool")
-					if evidence and (evidence.Name == "AK-47" or evidence.Name == "M4A1" or evidence.Name == "Remington 870") then
-						print("HANDS UP")
-						KillPL(v)
+					--print("pfft, character exists? and localplayer? neva heard of em")
+					for _, stuff in pairs(v.Character:GetChildren()) do
+						local evidence = stuff
+						if evidence and evidence:IsA("Tool") and (evidence.Name == "M9" or evidence.Name == "AK-47" or evidence.Name == "M4A1" or evidence.Name == "Remington 870") then
+							--print("HANDS UP")
+							KillPL(v)
+						end
 					end
 				end
 			end
+		end
+		if States.Disabled.MeleeWeapons then
+			--print("im disabling, im so cool")
+			for _, v in pairs(game.Players:GetPlayers()) do
+				wait(0.05)
+				--print("heh, players found, bet you cant do that")
+				if v.Character and v ~= LocalPlayer and CheckWhitelist(v) then
+					--print("pfft, character exists? and localplayer? neva heard of em")
+					for _, stuff in pairs(v.Character:GetChildren()) do
+						local evidence = stuff
+						if evidence and evidence:IsA("Tool") and (evidence.Name == "Hammer" or evidence.Name == "Crude Knife") then
+							--print("HANDS UP")
+							KillPL(v)
+						end
+					end
+				end
+			end
+		end
+		if States.Disabled.CopItems then
+			--print("im disabling, im so cool")
+			for _, v in pairs(game.Players:GetPlayers()) do
+				wait(0.05)
+				--print("heh, players found, bet you cant do that")
+				if v.Character and v ~= LocalPlayer and CheckWhitelist(v) then
+					--print("pfft, character exists? and localplayer? neva heard of em")
+					for _, stuff in pairs(v.Character:GetChildren()) do
+						local evidence = stuff
+						if evidence and evidence:IsA("Tool") and (evidence.Name == "Handcuffs" or evidence.Name == "Taser") then
+							--print("HANDS UP")
+							KillPL(v)
+						end
+					end
+				end
+			end
+		end
+	end
+end)
+
+--This script synchronizes with other users to make commands more effective
+--Dont try abusing the API you stupid nickger
+--It is open source for other script creators to synchronize
+--[[Getusers removed and you can blame "The Noob Evolution" for it
+local N,I,G,A = ...
+local Notif = _G.TopBarNotif
+local SyncWithUsers = true
+local Cool = nil
+local API = {
+	Send = function(a)
+		local events = {}
+		for i = 1,#a do
+			table.insert(events,{
+				Cframe = CFrame.new(0,0,0),
+				Distance = 0,
+				B = a[i]
+			})
+		end
+		--replace this with your own get gun function if you want to sync
+		local gun = I("M9")
+		game:GetService("ReplicatedStorage").ShootEvent:FireServer(events,gun)
+		game:GetService("ReplicatedStorage").ReloadEvent:FireServer(gun)
+	end,
+	Tog = function()
+		SyncWithUsers = not SyncWithUsers
+		return SyncWithUsers and "ON" or "OFF"
+	end,
+}
+local Players = game:GetService("Players")
+local ReplEvent = game:GetService("ReplicatedStorage"):WaitForChild("ReplicateEvent",1)
+if ReplEvent then
+	G.SyncUsers=ReplEvent.OnClientEvent:Connect(function(a)
+		if SyncWithUsers and a[1] and a[1].B then
+			if not Cool then
+				Cool = true
+				task.delay(2,function()
+					Cool = nil
+				end)
+				if a[1].B=="PlayMusic" and a[2] and a[2].B then
+					A("music "..a[2].B.." _sync",true)
+				end
+				if a[1].B=="StopMusic" then
+					for i,v in pairs(workspace:GetChildren()) do
+						if v.Name=="Playing Music" then
+							v:Destroy()
+							Notif("Music was Stopped By Another User. | Goto settings to disable this.",8)
+						end
+					end
+				end
+				if a[1].B=="Crash" then
+					if not G.CrashingServer then
+						G.CrashingServer = true
+						A("crashserver _synced",true)
+						Notif("SyncWithUsers | Another user has initiated server crash.")
+					end
+				end
+				if a[1].B=="Notify" and a[2] and a[2].B then
+					local plr = Players:FindFirstChild(a[2].B)
+					if plr and plr~=Players.LocalPlayer and a[3] and a[3].B then
+						Notif("[From "..plr.Name.."]: "..a[3].B)
+					end
+				end
+			end
+		end
+	end)
+end]]
+--[[
+    local API = (Source)
+    API.Send({"Crash"})
+    API.Send({"PlayMusic","music id here"})
+    API.Send({"GetUser_PissAdmin"})
+]] 
+
+task.spawn(function()
+	while true do
+		task.wait(0.01)
+		for i, v in pairs(Loops.Smite) do
+			task.wait(0.01)
+			repeat task.wait(0.05) local crabrave={[1]={Cframe=v.Character.Head.CFrame * CFrame.new(0, 1024, 0) * CFrame.Angles(math.rad(90), 0, 0) ,Distance=2048,RayObject=Ray.new()}} Rstorage.ShootEvent:FireServer(crabrave,gun);Rstorage.ReloadEvent:FireServer(gun);CreateClientRay(crabrave) KillPL(v, 1) until v.Character.Humanoid.Health <= 0
+			Loops.Smite[v.UserId] = nil
 		end
 	end
 end)
@@ -10785,7 +11375,7 @@ local ea, li = pcall(function()
 				end
 			end)
 		end
-		if Toggles.Oneshot and Method == "FireServer" and tostring(self) == "ShootEvent" then
+		if (Toggles.Oneshot and Method == "FireServer" and tostring(self) == "ShootEvent") or (shitlol and Method == "FireServer" and tostring(self) == "ShootEvent") then
 			if not SavedArgs.OneshotDebounce then
 				local Args = {...}
 				task.spawn(function()
@@ -10795,10 +11385,16 @@ local ea, li = pcall(function()
 						if LocalPlayer.TeamColor ~= plr.TeamColor then
 							SavedArgs.OneshotDebounce = true
 							task.delay(0.069,function() SavedArgs.OneshotDebounce = nil; end)
+							local eventDat = false
+							if shitlol ~= false then
+								eventDat = shitlol
+							end
 							if gun.Name == "Taser" then
-								KillPL(plr, false, "M9")
+								KillPL(plr, eventDat, "M9")
+								print(eventDat)
 							else
-								KillPL(plr, false, gun.Name)
+								KillPL(plr, eventDat, gun.Name)
+								print(eventDat)
 							end
 						end
 					end
@@ -10949,7 +11545,7 @@ task.spawn(function()
 	LocPL.UID = tonumber((LocalPlayer.CharacterAppearance):split('=')[#((LocalPlayer.CharacterAppearance):split('='))]); LocPL.UIN = LocalPlayer.Character.Name
 
 	local set = PLadmin_Settings
-	if set and next(set) then
+	if set and next(set) and not isfile("pladmin settings.json") then
 		Settings.JoinNotify = set.JoinNotify; Toggles.AutoRespawn = set.AutoRespawn; States.AntiVoid = set.AntiVoid
 		Toggles.AntiTase = set.AntiTase; Toggles.AntiArrest = set.AntiArrest; Toggles.Antishoot = set.AntiShoot
 		Toggles.AntiPunch = set.AntiPunch; States.AntiFling = set.AntiFling; Toggles.AntiShield = set.AntiShield
@@ -10966,6 +11562,7 @@ task.spawn(function()
 	local TPrefix = PLadmin_Settings and tostring(PLadmin_Settings.DefaultPrefix) or "?"
 	AddList("CREDITS", false, true)
 	AddList("devguy100", "Original Developer (Credits)", false)
+	AddList("SkidMaster999", "Ported Cmds from him (Credits)", false)
 	AddList("JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123 (Credits)", "Prizzlife modder on github", false)
 	AddList("qaqaisbest3", "roblox acc, special thanks for helping (Credits)", false)
 	AddList("SleepingxNezuko", "roblox acc, special thanks for helping (Credits)", false)
@@ -11295,6 +11892,12 @@ task.spawn(function()
 	AddList("gknife", "gives yo a prison life grab knife script", false)
 	AddList("rgb [R, G, B]", "changes ui color via adding", false)
 	AddList("gknife2", "upgraded version of script", false)
+	AddList("lol", "custom weapons list below:", false)
+	AddList("lol list:", "lagger, WTF, hitta, s, laser")
+	AddList("ify", "makes weapons more like other weapons, list below", false)
+	AddList("ify list:", "ak, m9, rem, m4, snip, sniper, taser, m16, m249", false)
+	AddList("meleedamage / mdmg [plr]", "deals damage via meleeevent", false)
+	AddList("smite / strike [plr]", "makes a beam go through a player and kill them")
 	--Toggles
 	NewToggleList("LocalPlayer_RunSpeed", "Default value is: 24", "click", function(arg)
 		local str = tonumber(arg)
@@ -11431,6 +12034,22 @@ task.spawn(function()
 		Settings.Ranked.CustomCmds = not Settings.Ranked.CustomCmds
 		return Settings.Ranked.CustomCmds
 	end)
+	NewToggleList("PunchSpammable", "probably pc only, lets / doesnt let you spam punch, if you wanna play more legit disable this", Settings.User.playFair, function()
+		Settings.User.playFair = not Settings.User.playFair
+		return Settings.User.playFair
+	end)
+	NewToggleList("OldEdge", "lets you use the old version of edge", Settings.User.oldEdge, function()
+		Settings.User.oldEdge = not Settings.User.oldEdge
+		return Settings.User.oldEdge
+	end)
+	NewToggleList("mEdge", "Melee edge, can get a victim as low as 1 hp", Settings.User.mEdge, function()
+		Settings.User.mEdge = not Settings.User.mEdge
+		return Settings.User.mEdge
+	end)
+	NewToggleList("Save settings", "you can force save, but it auto saves, so u dont need, its nice to have tho", "click", function(arg)
+		saveSettings()
+		Notif("KK", "i think i saved settings successfully!")
+	end, true)
 	if Execution_Runtime then
 		Notif("Potang ina mo", "Loaded in " .. tostring(tick() - Execution_Runtime) .. " second(s). github.com/devguy100/PrizzLife", 6)
 	end
