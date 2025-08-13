@@ -909,6 +909,7 @@ Settings = {
 		qTeleport = true;
 		NormalRun = false;
 		--NormalCrawl = false;
+		Faultyrespawn = false;
 	};
 	Ranked = {
 		AutoWhitelist = false;
@@ -2535,16 +2536,56 @@ local KillPL = function(plr, events, guntouse, WaitToDie)
 end
 
 meleeDamage = function(plr, dmg)
+	nclip = Toggles.Noclip
+	Toggles.Noclip = true
 	opos = LocalPlayer.Character.HumanoidRootPart.CFrame
-	task.wait(0.05)
-	LocTP(plr.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -10, 0))
-	wait(0.1)
-	for i=1,dmg do
-		task.wait()
-		LocTP(plr.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -10, 0))
-		MeleEve(plr)
+	--plr = PlrFromArgs(Args[2], false)
+	--amt = tonumber(Args[3]) or 1
+	if dmg and plr.Character.HumanoidRootPart then
+		oompa = true
+		if plr.Character:FindFirstChild("Humanoid").Sit then
+			LocTP(plr.Character:FindFirstChild("Head").CFrame * CFrame.new(0, -12, 0))
+		else 
+			LocTP(plr.Character:FindFirstChild("Head").CFrame * CFrame.new(0, -8, 0)) 
+		end
+	for i=1,3 do
+		wait(0.1)
+		if plr.Character:FindFirstChild("Humanoid").Sit then
+			LocTP(plr.Character:FindFirstChild("Head").CFrame * CFrame.new(0, -12, 0))
+		else 
+			LocTP(plr.Character:FindFirstChild("Head").CFrame * CFrame.new(0, -8, 0)) 
+		end
 	end
-	LocTP(opos)
+	wait(0.1)
+	--for i=1,dmg do
+	num = 0
+	while dmg > num do 
+		local plrhp = plr.Character.Humanoid.Health
+		--task.wait(0.1)
+		if plr.Character:FindFirstChild("Humanoid").Sit then
+			LocTP(plr.Character:FindFirstChild("Head").CFrame * CFrame.new(0, -12, 0))
+		else 
+			LocTP(plr.Character:FindFirstChild("Head").CFrame * CFrame.new(0, -8, 0)) 
+		end
+		wait(0.05)
+		MeleEve(plr)
+		if plr.Character.Humanoid.Health >= plrhp or plr.Character.Humanoid.Health <= 0 then
+			num = num - 1
+		end
+		num = num + 1
+	end
+	LocalPlayer.Character.HumanoidRootPart.CFrame = opos
+	Toggles.Noclip = nclip
+	end
+	--[[elseif plr.Character.HumanoidRootPart then
+		local oompa = false
+		while plr.Character.Humanoid.Health > 0 do
+			wait(0.05)
+			while oompa == false do LocalPlayer.Character:FindFirstChild("Head").CFrame = plr.Character:FindFirstChild("Head").CFrame end
+			MeleEve(plr)
+		end
+		LocalPlayer.Character.HumanoidRootPart.CFrame = opos
+	end]]
 end
 
 local TableKill = function(tables)
@@ -4840,26 +4881,45 @@ end
 			LAction("equip", tool)
 		end
 	elseif cm("mdmg") or cm("meleedamage") then
+		if LOLITDONTEXISTHAHAHAHA then
+		nclip = Toggles.Noclip
+		Toggles.Noclip = true
 		opos = LocalPlayer.Character.HumanoidRootPart.CFrame
 		plr = PlrFromArgs(Args[2], false)
 		amt = tonumber(Args[3]) or 1
 		if amt and plr.Character.HumanoidRootPart then
-			LocTP(plr.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -10, 0))
-			wait(0.3)
+			oompa = true
+			LocTP(plr.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -5, 0))
+			for i=1,3 do
+			wait(0.1)
+			LocTP(plr.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -5, 0))
+			end
+			wait(0.1)
 			for i=1,amt do
-				task.wait()
-				LocTP(plr.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -10, 0))
+				local plrhp = plr.Character.Humanoid.Health
+				--task.wait(0.1)
+				LocTP(plr.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -5--[[-9]], 0))
+				wait(0.05)
 				MeleEve(plr)
+				if plr.Character.Humanoid.Health >= plrhp then
+					amt = amt - 1
+				end
 			end
 			LocalPlayer.Character.HumanoidRootPart.CFrame = opos
+			Toggles.Noclip = nclip
 		elseif plr.Character.HumanoidRootPart then
+			local oompa = false
 			while plr.Character.Humanoid.Health > 0 do
 				wait(0.05)
-				LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = plr.Character:FindFirstChild("HumanoidRootPart").CFrame
+				while oompa == false do LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = plr.Character:FindFirstChild("HumanoidRootPart").CFrame end
 				MeleEve(plr)
 			end
 			LocalPlayer.Character.HumanoidRootPart.CFrame = opos
 		end
+		end
+		plr = PlrFromArgs(Args[2], false)
+		amt = tonumber(Args[3]) or 1
+		meleeDamage(plr, amt)
 	elseif cm("smite") or cm("strike") then
 		plr = PlrFromArgs(Args[2], false)
 		if plr ~= LocalPlayer then
@@ -10026,6 +10086,21 @@ local OnReplication = function(args)
 	end
 end
 
+-- Faultyrespawn
+task.spawn(function()
+	while true do
+		task.wait()
+		if (LocalPlayer.Character.Humanoid.Health < 20 or not LocalPlayer.Character.Humanoid) and Settings.User.Faultyrespawn then
+			if LocalPlayer.TeamColor.Name == "Really red" then
+				TeamEve("Bright blue")
+				TeamTo("criminal")
+			else
+				TeamEve(LocalPlayer.TeamColor.Name)
+			end
+		end
+	end
+end)
+
 --Autorespawn
 SavedPositions.AutoRe = false
 local diedevent
@@ -11211,7 +11286,7 @@ task.spawn(function()
 								if PPart and LPart and CheckWhitelist(PotangIna) then
 									if (PPart.Position-LPart.Position).Magnitude <= 20 then
 										for i = 1, 10 do
-											MeleEve(PotangIna)
+											--MeleEve(PotangIna)
 										end
 									end
 								end
@@ -11605,6 +11680,7 @@ task.spawn(function()
 	AddList("qaqaisbest3", "roblox acc, special thanks for helping (Credits)", false)
 	AddList("SleepingxNezuko", "roblox acc, special thanks for helping (Credits)", false)
 	AddList("pjsonnalj", "roblox acc, helping me test (Credits)")
+	AddList("solomeoparedes108", "roblox acc, helping me test (Credits)")
 	AddList("Command List", "If you accidentally lose the gui, type /revert in chat", false)
 	AddList("prefix [Prefix]", "Changes prefix (Default set to " .. TPrefix .. ")", false) --V
 	AddList("discord / support / help", "Get the discord invite", false)
@@ -12090,6 +12166,10 @@ task.spawn(function()
 		return Settings.User.oldEdge
 	end)
 	NewToggleList("mEdge", "Melee edge, can get a victim as low as 1 hp", Settings.User.mEdge, function()
+		Settings.User.mEdge = not Settings.User.mEdge
+		return Settings.User.mEdge
+	end)
+	NewToggleList("Faultyrespawn", "Might be less percise, but! respawns faster, it wont work with reset though still useful! it respawns when at 20 or less hp", Settings.User.mEdge, function()
 		Settings.User.mEdge = not Settings.User.mEdge
 		return Settings.User.mEdge
 	end)
