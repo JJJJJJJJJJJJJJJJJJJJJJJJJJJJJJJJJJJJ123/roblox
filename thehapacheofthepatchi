@@ -4872,7 +4872,9 @@ end
 		local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
 		if tool then
 			tool.Equipped:Connect(function()
-				shitlol = Args[2]
+				if tonumber(Args[2]) then
+					shitlol = Args[2]
+				end
 			end)
 			tool.Unequipped:Connect(function()
 				shitlol = false
@@ -11420,9 +11422,10 @@ local ea, li = pcall(function()
 							if shitlol ~= false then
 								eventDat = shitlol
 							end
-							if eventDat == kill then
-								eventdat = false
+							if eventDat == "kill" then
+								eventDat = false
 							end
+							print(eventDat)
 							if gun.Name == "Taser" then
 								KillPL(plr, eventDat, "M9")
 								print(eventDat)
