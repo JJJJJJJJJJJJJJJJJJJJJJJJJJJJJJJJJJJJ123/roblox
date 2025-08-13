@@ -4867,6 +4867,19 @@ end
 	elseif cm("trapc") then
 		local DaPlayer = PlrFromArgs(Args[2], false)
 		BringPL(DaPlayer, Teleports.trap2, true); Notif("OK", "Brought " .. DaPlayer.Name .. " to trap2")
+	elseif cm("oneshotprop") or cm("oshotprop") or cm("osp") then
+		local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
+		if tool then
+			tool.Equipped:Connect(function()
+				shitlol = 99
+			end)
+			tool.Unequipped:Connect(function()
+				shitlol = false
+			end)
+			Notif("KK", "probably succeeded")
+		else
+			Notif("Error :(", "couldn't find your tool! sorry!")
+		end
 	elseif cm("goto") or cm("to") then
 		local DaPlayer = PlrFromArgs(Args[2], false)
 		if DaPlayer then
@@ -12067,9 +12080,9 @@ task.spawn(function()
 		Settings.User.mEdge = not Settings.User.mEdge
 		return Settings.User.mEdge
 	end)
-	NewToggleList("Keep script", "auto runs script when you rejoin or serverhop", Settings.User.mEdge, function()
-		Settings.User.mEdge = not Settings.User.mEdge
-		return Settings.User.mEdge
+	NewToggleList("Keep script", "auto runs script when you rejoin or serverhop", Settings.User.qTeleport, function()
+		Settings.User.qTeleport = not Settings.User.qTeleport
+		return Settings.User.qTeleport
 	end)
 	NewToggleList("Save settings", "you can force save, but it auto saves, so u dont need, its nice to have tho", "click", function(arg)
 		saveSettings()
