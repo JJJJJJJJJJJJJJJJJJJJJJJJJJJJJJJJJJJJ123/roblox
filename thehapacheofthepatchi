@@ -10255,12 +10255,18 @@ Connections.InputBegan = game:GetService("UserInputService").InputBegan:Connect(
 		game.Players.LocalPlayer.PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar:CaptureFocus() breaking normal chat]]
 	end
 	if input.KeyCode == Enum.KeyCode.LeftShift then
-		States.Running = true; LAction("speed", Saved.RunSpeed)
+		if Settings.User.NormalRun then
+			States.Running = true; LAction("speed", Saved.RunSpeed)
+		else
+			VKeyPress(Enum.KeyCode.LeftShift "UnHold")
+		end
 	end
 end)
 Connections.InputEnded = game:GetService("UserInputService").InputEnded:Connect(function(input)
-	if input.KeyCode == Enum.KeyCode.LeftShift then
+	if input.KeyCode == Enum.KeyCode.LeftShift and Settings.User.NormalRun then
 		States.Running = false; LAction("speed", Saved.NormalSpeed)
+	else
+		VKeyPress(Enum.KeyCode.LeftShift "UnHold")
 	end
 	if input.KeyCode == Enum.KeyCode.F then
 		States.IsHoldingF = false
@@ -12271,15 +12277,28 @@ task.spawn(function()
 	PunchButton.Position = UDim2.new(0, 0, 0.330000013, 0)
 	ActionFrame.Visible=not LocPL.isMouse
 	ActionFrame.PunchButton.MouseButton1Down:Connect(function()
-		States.IsHoldingF = true; pcall(VirtualPunch)
-	end);ActionFrame.PunchButton.MouseButton1Up:Connect(function()
+		States.IsHoldingF = true;
+		if Settings.User.playFair then
+			VKeyPress("F","Press")
+		else
+			pcall(VirtualPunch)
+		end
+	end);ActionFrame.PunchButton.MouseButton1Up:Connect(function() 
 		States.IsHoldingF = false
 	end);ActionFrame.CrawlButton.MouseButton1Click:Connect(function()
 		VKeyPress("C","Press")
 	end);ActionFrame.RunButton.MouseButton1Down:Connect(function()
-		States.Running = true
+		if not Settings.User.NormalRun then
+			VKeyPress(Enum.KeyCode.LeftShift "Hold")
+		else
+			States.Running = true
+		end
 	end);ActionFrame.RunButton.MouseButton1Up:Connect(function()
-		States.Running = false; LAction("speed",Saved.NormalSpeed)
+		if not Settings.User.NormalRun then
+			VKeyPress(Enum.KeyCode.LeftShift "UnHold")
+		else
+			States.Running = false; LAction("speed",Saved.NormalSpeed)
+		end
 	end); deprint("Debug_Startup done")
 end)
 
