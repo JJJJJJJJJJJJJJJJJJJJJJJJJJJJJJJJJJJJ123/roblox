@@ -10090,7 +10090,7 @@ end
 task.spawn(function()
 	while true do
 		task.wait()
-		if (LocalPlayer.Character.Humanoid.Health < 20 or not LocalPlayer.Character.Humanoid) and Settings.User.Faultyrespawn then
+		if (LocalPlayer.Character.Humanoid.Health < 33 or not LocalPlayer.Character.Humanoid) and Settings.User.Faultyrespawn then
 			if LocalPlayer.TeamColor.Name == "Really red" then
 				TeamEve("Bright blue")
 				TeamTo("criminal")
@@ -10256,17 +10256,18 @@ Connections.InputBegan = game:GetService("UserInputService").InputBegan:Connect(
 	end
 	if input.KeyCode == Enum.KeyCode.LeftShift then
 		if Settings.User.NormalRun then
-			States.Running = true; LAction("speed", Saved.RunSpeed)
+
 		else
-			VKeyPress(Enum.KeyCode.LeftShift "UnHold")
+			States.Running = true; LAction("speed", Saved.RunSpeed)
+			--VKeyPress(Enum.KeyCode.LeftShift, "Hold")
 		end
 	end
 end)
 Connections.InputEnded = game:GetService("UserInputService").InputEnded:Connect(function(input)
 	if input.KeyCode == Enum.KeyCode.LeftShift and Settings.User.NormalRun then
-		States.Running = false; LAction("speed", Saved.NormalSpeed)
+		--VKeyPress(Enum.KeyCode.LeftShift, "UnHold")
 	else
-		VKeyPress(Enum.KeyCode.LeftShift "UnHold")
+		States.Running = false; LAction("speed", Saved.NormalSpeed)
 	end
 	if input.KeyCode == Enum.KeyCode.F then
 		States.IsHoldingF = false
@@ -12288,17 +12289,17 @@ task.spawn(function()
 	end);ActionFrame.CrawlButton.MouseButton1Click:Connect(function()
 		VKeyPress("C","Press")
 	end);ActionFrame.RunButton.MouseButton1Down:Connect(function()
-		if not Settings.User.NormalRun then
-			VKeyPress(Enum.KeyCode.LeftShift "Hold")
-		else
-			States.Running = true
-		end
+		--if not Settings.User.NormalRun then
+			--VKeyPress(Enum.KeyCode.LeftShift, "Hold")
+		--else
+			States.Running = true; LAction("speed",Saved.RunSpeed)
+		--end
 	end);ActionFrame.RunButton.MouseButton1Up:Connect(function()
-		if not Settings.User.NormalRun then
-			VKeyPress(Enum.KeyCode.LeftShift "UnHold")
-		else
+		--if not Settings.User.NormalRun then
+			--VKeyPress(Enum.KeyCode.LeftShift, "UnHold")
+		--else
 			States.Running = false; LAction("speed",Saved.NormalSpeed)
-		end
+		--end
 	end); deprint("Debug_Startup done")
 end)
 
