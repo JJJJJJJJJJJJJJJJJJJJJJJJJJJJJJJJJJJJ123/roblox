@@ -4845,7 +4845,7 @@ end
 		amt = tonumber(Args[3]) or 1
 		if amt and plr.Character.HumanoidRootPart then
 			LocTP(plr.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -10, 0))
-			wait(0.1)
+			wait(0.3)
 			for i=1,amt do
 				task.wait()
 				LocTP(plr.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, -10, 0))
