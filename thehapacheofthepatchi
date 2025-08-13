@@ -4872,9 +4872,7 @@ end
 		local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
 		if tool then
 			tool.Equipped:Connect(function()
-				if tonumber(Args[2]) then
-					shitlol = Args[2]
-				end
+				shitlol = Args[2]
 			end)
 			tool.Unequipped:Connect(function()
 				shitlol = false
@@ -11423,6 +11421,9 @@ local ea, li = pcall(function()
 								eventDat = shitlol
 							end
 							if eventDat == "kill" then
+								eventDat = false
+							end
+							if (Toggles.Oneshot and Method == "FireServer" and tostring(self) == "ShootEvent") then
 								eventDat = false
 							end
 							print(eventDat)
