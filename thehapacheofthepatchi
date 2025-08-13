@@ -907,6 +907,8 @@ Settings = {
 		oldEdge = false;
 		mEdge = false;
 		qTeleport = true;
+		NormalRun = false;
+		--NormalCrawl = false;
 	};
 	Ranked = {
 		AutoWhitelist = false;
@@ -11260,7 +11262,7 @@ task.spawn(function()
 		if States.Speeding then
 			LAction("speed", Saved.WalkSpeed)
 		elseif States.Running then
-			if not (LocalPlayer.Character:FindFirstChild("Humanoid").WalkSpeed == Saved.RunSpeed) then
+			if not (LocalPlayer.Character:FindFirstChild("Humanoid").WalkSpeed == Saved.RunSpeed) and not (Settings.User.NormalRun) then
 				LAction("speed", Saved.RunSpeed)
 			end
 		end
@@ -12049,6 +12051,14 @@ task.spawn(function()
 		Settings.User.playFair = not Settings.User.playFair
 		return Settings.User.playFair
 	end)
+	NewToggleList("NormalRun", "probably pc only, lets / doesnt let you run normally, if you wanna play more legit disable this", Settings.User.playFair, function()
+		Settings.User.NormalRun = not Settings.User.NormalRun
+		return Settings.User.NormalRun
+	end)
+	--[[NewToggleList("NormalCrawl", "probably pc only, lets / doesnt let you crawl normally to avoid weird bugs, if you wanna play more legit disable this", Settings.User.playFair, function()
+		Settings.User.NormalCrawl = not Settings.User.NormalCrawl
+		return Settings.User.NormalCrawl
+	end)]]
 	NewToggleList("OldEdge", "lets you use the old version of edge", Settings.User.oldEdge, function()
 		Settings.User.oldEdge = not Settings.User.oldEdge
 		return Settings.User.oldEdge
