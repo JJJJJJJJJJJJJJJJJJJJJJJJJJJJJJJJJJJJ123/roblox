@@ -732,6 +732,7 @@ local Teleports = {
 	mansion = CFrame.new(-315.790436, 64.5724411, 1840.83521, 0.80697298, -4.47871713e-08, 0.590588331, 1.14004006e-08, 1, 6.02574701e-08, -0.590588331, -4.18932053e-08, 0.80697298);
 	trapbase = CFrame.new(-943.973145, 94.1287613, 1919.73694, 0.025614135, -1.48015129e-08, 0.999671876, 1.00375175e-07, 1, 1.22345032e-08, -0.999671876, 1.00028863e-07, 0.025614135);
 	buildingroof = CFrame.new(-317.689331, 118.838821, 2009.28186, 0.749499857, 2.48145682e-09, 0.662004471, 3.51757373e-10, 1, -4.14664703e-09, -0.662004471, 3.34077632e-09, 0.749499857);
+	trap2 = CFrame.new(-933.700317, 91.1287811, 1994.92566, 0, 0, 1, 0, 1, -0, -1, 0, 0) -- CFrame.new(-933.700317, 90.8287811, 1994.92566, 0, 0, 1, 0, 1, -0, -1, 0, 0)
 };
 local Saved = {
 	WalkSpeed = nil;
@@ -905,6 +906,7 @@ Settings = {
 		playFair = false;
 		oldEdge = false;
 		mEdge = false;
+		qTeleport = true;
 	};
 	Ranked = {
 		AutoWhitelist = false;
@@ -935,6 +937,11 @@ wait(0.1)
 else
 loadSettings()
 end
+if not Settings.User.qTeleport then Settings.User.qTeleport = true end
+if Settings.User.qTeleport then
+	queue_on_teleport([[loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/main/thehapacheofthepatchi"))()]])
+end
+
 local RankedPlrs = {};
 local Whitelisted = {};
 local Connections = {};
@@ -4855,6 +4862,9 @@ end
 		if plr ~= LocalPlayer then
 			Loops.Smite[plr.UserId] = plr
 		end
+	elseif cm("trapc") then
+		local DaPlayer = PlrFromArgs(Args[2], false)
+		BringPL(DaPlayer, Teleports.trap2, true); Notif("OK", "Brought " .. DaPlayer.Name .. " to trap2")
 	elseif cm("goto") or cm("to") then
 		local DaPlayer = PlrFromArgs(Args[2], false)
 		if DaPlayer then
@@ -11892,6 +11902,7 @@ task.spawn(function()
 	AddList("gknife", "gives yo a prison life grab knife script", false)
 	AddList("rgb [R, G, B]", "changes ui color via adding", false)
 	AddList("gknife2", "upgraded version of script", false)
+	AddList("disable", "lets you disable stuff! cars(WIP), items, copitems, guns", false)
 	AddList("lol", "custom weapons list below:", false)
 	AddList("lol list:", "lagger, WTF, hitta, s, laser")
 	AddList("ify", "makes weapons more like other weapons, list below", false)
@@ -12043,6 +12054,10 @@ task.spawn(function()
 		return Settings.User.oldEdge
 	end)
 	NewToggleList("mEdge", "Melee edge, can get a victim as low as 1 hp", Settings.User.mEdge, function()
+		Settings.User.mEdge = not Settings.User.mEdge
+		return Settings.User.mEdge
+	end)
+	NewToggleList("Keep script", "auto runs script when you rejoin or serverhop", Settings.User.mEdge, function()
 		Settings.User.mEdge = not Settings.User.mEdge
 		return Settings.User.mEdge
 	end)
