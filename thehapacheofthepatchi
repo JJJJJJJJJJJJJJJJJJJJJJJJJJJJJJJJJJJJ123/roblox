@@ -939,8 +939,7 @@ wait(0.1)
 else
 loadSettings()
 end
-queue = function()
-	if not Settings.User.qTeleport then Settings.User.qTeleport = true end
+queueTP = function()
 	if Settings.User.qTeleport then
 		queue_on_teleport([[loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/main/thehapacheofthepatchi"))()]])
 	end
@@ -7582,11 +7581,11 @@ end
 		SpawnClientStuff("bat")
 		Notif("OK", "Spawned client-sided bat.")
 	elseif cm("rejoin") or cm("rj") then
-		queue() -- by me :D
+		queueTP() -- by me :D
 		Notif("OK", "Rejoining...")
 		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
 	elseif cm("serverhop") or cm("svhop") then
-		queue() -- by me too! :D
+		queueTP() -- by me too! :D
 		local s,f = pcall(function()
 			Notif("Please wait...", "Serverhopping...")
 			local found, get = {}, Saved.HttpRequest
@@ -11420,6 +11419,9 @@ local ea, li = pcall(function()
 							local eventDat = false
 							if shitlol ~= false then
 								eventDat = shitlol
+							end
+							if eventDat == kill then
+								eventdat = false
 							end
 							if gun.Name == "Taser" then
 								KillPL(plr, eventDat, "M9")
