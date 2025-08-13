@@ -4871,7 +4871,7 @@ end
 		local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
 		if tool then
 			tool.Equipped:Connect(function()
-				shitlol = 99
+				shitlol = Args[2]
 			end)
 			tool.Unequipped:Connect(function()
 				shitlol = false
@@ -4880,6 +4880,9 @@ end
 		else
 			Notif("Error :(", "couldn't find your tool! sorry!")
 		end
+		LAction("unequip")
+		task.wait(.1)
+		LAction("equip", tool)
 	elseif cm("goto") or cm("to") then
 		local DaPlayer = PlrFromArgs(Args[2], false)
 		if DaPlayer then
