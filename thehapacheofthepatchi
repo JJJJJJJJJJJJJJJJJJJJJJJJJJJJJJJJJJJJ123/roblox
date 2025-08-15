@@ -7,6 +7,8 @@
 -- FASTER RESPAWN PLEASEEEEEE
 -- add the sync feature so other players that use this script and maybe piss admin can see stuff too! or utilize it in some way
 -- tase anim id: https://roblox.com/library/180435571
+-- problems with faultyrespawn? potentially because its only ondiedevent
+-- private messaging broken, plz fix
 Settings = {}
 loadSettings = function()
 	local settings = readfile("pladmin settings.json")
@@ -910,6 +912,7 @@ Settings = {
 		NormalRun = false;
 		--NormalCrawl = false;
 		Faultyrespawn = false;
+		FaultyrespawnThreshold = 33
 	};
 	Ranked = {
 		AutoWhitelist = false;
@@ -1253,6 +1256,7 @@ local SysMessage = function(datext, dacolor)
 	})
 end
 local Chat = function(args, isWhisper, isSilent) -- new written by ai and working, yea yea, i used ai
+	local chatbar = game:GetService("CoreGui").ExperienceChat.appLayout.chatInputBar.Background.Container.TextContainer.TextBoxContainer.TextBox
 	local useModernChat = game:GetService("TextChatService"):FindFirstChild("TextChannels") ~= nil
 
 	-- Format message: convert \n to \r for modern chat
@@ -1267,11 +1271,19 @@ local Chat = function(args, isWhisper, isSilent) -- new written by ai and workin
 		local channel = game:GetService("TextChatService")
 			:WaitForChild("TextChannels")
 			:FindFirstChild("RBXGeneral")
+			local channelw = game:GetService("TextChatService"):WaitForChild("TextChannels"):FindFirstChild("RBXWhisper")
 
 		if channel then
-			local success, err = pcall(function()
-				channel:SendAsync(message)
-			end)
+			if typeof(isWhisper) == "Instance" and isWhisper:IsA("Player") and channelw then
+				local success, err = pcall(function()
+					--game:GetService("TextChatService"):SendAsync(message, isWhisper)
+					chatbar.text = message
+				end)
+			else
+				local success, err = pcall(function()
+					channel:SendAsync(message)
+				end)
+			end
 			if not success then
 				warn("SendAsync failed:", err)
 			end
@@ -2536,6 +2548,7 @@ local KillPL = function(plr, events, guntouse, WaitToDie)
 end
 
 meleeDamage = function(plr, dmg)
+	local ggrav = game.Workspace.Gravity
 	nclip = Toggles.Noclip
 	Toggles.Noclip = true
 	opos = LocalPlayer.Character.HumanoidRootPart.CFrame
@@ -2557,25 +2570,46 @@ meleeDamage = function(plr, dmg)
 		end
 	end
 	wait(0.1)
+	game.Workspace.Gravity = 0
 	--for i=1,dmg do
 	num = 0
+	oompa = true
+	task.spawn(function()
+			while oompa do
+				if plr.Character:FindFirstChild("Humanoid").Sit then
+					wait()
+					LocTP(plr.Character:FindFirstChild("Head").CFrame * CFrame.new(0, -12, 0))
+				else 
+					wait()
+					LocTP(plr.Character:FindFirstChild("Head").CFrame * CFrame.new(0, -8, 0)) 
+				end
+			end
+		end)
+	wait(0.05)
 	while dmg > num do 
 		local plrhp = plr.Character.Humanoid.Health
-		--task.wait(0.1)
-		if plr.Character:FindFirstChild("Humanoid").Sit then
-			LocTP(plr.Character:FindFirstChild("Head").CFrame * CFrame.new(0, -12, 0))
-		else 
-			LocTP(plr.Character:FindFirstChild("Head").CFrame * CFrame.new(0, -8, 0)) 
-		end
+		task.wait(0.05)
+		--[[task.spawn(function()
+			while oompa do
+				if plr.Character:FindFirstChild("Humanoid").Sit then
+					LocTP(plr.Character:FindFirstChild("Head").CFrame * CFrame.new(0, -12, 0))
+				else 
+					LocTP(plr.Character:FindFirstChild("Head").CFrame * CFrame.new(0, -8, 0)) 
+				end
+			end
+		end)]]
 		wait(0.05)
 		MeleEve(plr)
-		if plr.Character.Humanoid.Health >= plrhp or plr.Character.Humanoid.Health <= 0 then
+		--[[if plr.Character.Humanoid.Health >= plrhp or plr.Character.Humanoid.Health <= 0 then
 			num = num - 1
-		end
+		end]]
 		num = num + 1
 	end
+	oompa = false
+	wait(0.1)
 	LocalPlayer.Character.HumanoidRootPart.CFrame = opos
 	Toggles.Noclip = nclip
+	game.Workspace.Gravity = ggrav
 	end
 	--[[elseif plr.Character.HumanoidRootPart then
 		local oompa = false
@@ -4952,8 +4986,8 @@ end
 			local DaRandom = GetRandomPlr(LocalPlayer)
 			LocTP(DaRandom.Character:FindFirstChild("HumanoidRootPart").CFrame)
 		else
-			Notif("Error", "Not a valid player.")
-		end
+		Notif("Error", "Not a valid player.")
+	end
 	elseif cm("kill") or cm("oof") or cm("die") then
 		local DaPlayer = PlrFromArgs(Args[2], false)
 		if DaPlayer then
@@ -10086,11 +10120,27 @@ local OnReplication = function(args)
 	end
 end
 
--- Faultyrespawn
+-- Faultyrespawn old
 task.spawn(function()
 	while true do
-		task.wait()
-		if (LocalPlayer.Character.Humanoid.Health < 33 or not LocalPlayer.Character.Humanoid) and Settings.User.Faultyrespawn then
+		if LocalPlayer.Character then
+			SavedPositions.AutoRe = LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
+		else
+			wait(dbnc)
+		end
+		if not dbnc then
+			dbnc = 0
+		end
+		task.wait(dbnc)
+		dbnc = 0
+		if not Settings.User.FaultyrespawnThreshold then
+			Settings.User.FaultyrespawnThreshold = 33
+		end
+		if Settings.User.FaultyrespawnThreshold > 99 then
+			Settings.User.FaultyrespawnThreshold = 33
+		end
+		if Settings.User.Faultyrespawn and (not LocalPlayer.Character or not LocalPlayer.Character.Humanoid or (LocalPlayer.Character.Humanoid.Health < (Settings.User.FaultyrespawnThreshold or 33))) then
+			dbnc = 0.2
 			if LocalPlayer.TeamColor.Name == "Really red" then
 				TeamEve("Bright blue")
 				TeamTo("criminal")
@@ -10110,7 +10160,10 @@ local function ondiedevent()
 		diedevent:Disconnect(); SaveCamPos()
 		SavedPositions.AutoRe = lochar:WaitForChild("HumanoidRootPart", 1) and LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
 	end)()
-	if Toggles.AutoRespawn then
+	--[[if not Settings.User.FaultyrespawnThreshold then
+		Settings.User.FaultyrespawnThreshold = 33
+	end]]
+	if Toggles.AutoRespawn then -- or (LocalPlayer.Character.Humanoid.Health < Settings.User.FaultyrespawnThreshold and Settings.User.Faultyrespawn) then
 		local locteam = LocalPlayer.TeamColor
 		if locteam == BrickColor.new("Really red") then
 			if #Teams.Guards:GetPlayers() < 8 then
@@ -10209,7 +10262,7 @@ end
 local function oncharadded()
 	lochar = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 	coroutine.wrap(charaddtask)()
-	if SavedPositions.AutoRe and Toggles.AutoRespawn then
+	if SavedPositions.AutoRe and (Toggles.AutoRespawn or Settings.User.Faultyrespawn) then
 		local LRoot = lochar:WaitForChild("HumanoidRootPart", 1)
 		if LRoot then
 			LRoot.CFrame = SavedPositions.AutoRe; LoadCamPos(); LRoot.CFrame = SavedPositions.AutoRe
@@ -10255,18 +10308,14 @@ Connections.InputBegan = game:GetService("UserInputService").InputBegan:Connect(
 		game.Players.LocalPlayer.PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar:CaptureFocus() breaking normal chat]]
 	end
 	if input.KeyCode == Enum.KeyCode.LeftShift then
-		if Settings.User.NormalRun then
-
-		else
+		if not Settings.User.NormalRun then
 			States.Running = true; LAction("speed", Saved.RunSpeed)
 			--VKeyPress(Enum.KeyCode.LeftShift, "Hold")
 		end
 	end
 end)
 Connections.InputEnded = game:GetService("UserInputService").InputEnded:Connect(function(input)
-	if input.KeyCode == Enum.KeyCode.LeftShift and Settings.User.NormalRun then
-		--VKeyPress(Enum.KeyCode.LeftShift, "UnHold")
-	else
+	if input.KeyCode == Enum.KeyCode.LeftShift and not Settings.User.NormalRun then
 		States.Running = false; LAction("speed", Saved.NormalSpeed)
 	end
 	if input.KeyCode == Enum.KeyCode.F then
@@ -11682,7 +11731,7 @@ task.spawn(function()
 	local TPrefix = PLadmin_Settings and tostring(PLadmin_Settings.DefaultPrefix) or "?"
 	AddList("CREDITS", false, true)
 	AddList("devguy100", "Original Developer (Credits)", false)
-	AddList("SkidMaster999", "Ported Cmds from him (Credits)", false)
+	AddList("SkidMaster999", "Used 1 or more apis from him (Credits)", false)
 	AddList("JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123 (Credits)", "Prizzlife modder on github", false)
 	AddList("qaqaisbest3", "roblox acc, special thanks for helping (Credits)", false)
 	AddList("SleepingxNezuko", "roblox acc, special thanks for helping (Credits)", false)
@@ -12176,10 +12225,14 @@ task.spawn(function()
 		Settings.User.mEdge = not Settings.User.mEdge
 		return Settings.User.mEdge
 	end)
-	NewToggleList("Faultyrespawn", "Might be less percise, but! respawns faster, it wont work with reset though still useful! it respawns when at 20 or less hp", Settings.User.mEdge, function()
-		Settings.User.mEdge = not Settings.User.mEdge
-		return Settings.User.mEdge
+	NewToggleList("Faultyrespawn", "Might be less percise, but! respawns faster, it wont work with reset though still useful! it respawns when at 33 or less hp by default (can be customized by FaultyrespawnThreshold)", Settings.User.Faultyrespawn, function()
+		Settings.User.Faultyrespawn = not Settings.User.Faultyrespawn
+		return Settings.User.Faultyrespawn
 	end)
+	NewToggleList("FaultyrespawnThreshold", "Default threshold is: 33", "click", function(arg)
+		local str = tonumber(arg)
+		Settings.User.FaultyrespawnThreshold = str
+	end, true)
 	NewToggleList("Keep script", "auto runs script when you rejoin or serverhop", Settings.User.qTeleport, function()
 		Settings.User.qTeleport = not Settings.User.qTeleport
 		return Settings.User.qTeleport
