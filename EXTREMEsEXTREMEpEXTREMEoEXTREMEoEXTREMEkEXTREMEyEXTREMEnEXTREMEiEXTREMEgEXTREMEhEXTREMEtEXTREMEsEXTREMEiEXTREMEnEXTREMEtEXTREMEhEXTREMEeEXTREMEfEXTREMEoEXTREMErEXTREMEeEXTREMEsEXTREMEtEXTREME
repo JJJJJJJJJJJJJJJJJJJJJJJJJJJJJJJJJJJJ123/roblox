@@ -1,4 +1,3 @@
-queue_on_teleport("loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/main/EXTREMEsEXTREMEpEXTREMEoEXTREMEoEXTREMEkEXTREMEyEXTREMEnEXTREMEiEXTREMEgEXTREMEhEXTREMEtEXTREMEsEXTREMEiEXTREMEnEXTREMEtEXTREMEhEXTREMEeEXTREMEfEXTREMEoEXTREMErEXTREMEeEXTREMEsEXTREMEtEXTREME", true))()", true))()")
 getgenv().AutoFarm = true
 getgenv().hop = "old"
 loadstring(game:HttpGet("https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/Farm%20Diamond%20v2.lua"))()
