@@ -1,2 +1,4 @@
--- This script was generated using the MoonVeil Obfuscator v1.4.0 [https://moonveil.cc] and not by me: original - idk if they changed it to be malicious idk if they changed it to be malicious idk if they changed it to be malicious https://pastefy.app/jAH6blRn/raw idk if they changed it to be malicious
-queue_on_teleport("loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/main/badEXTREMEsEXTREMEpEXTREMEoEXTREMEoEXTREMEkEXTREMEyEXTREMEnEXTREMEiEXTREMEgEXTREMEhEXTREMEtEXTREMEsEXTREMEiEXTREMEnEXTREMEtEXTREMEhEXTREMEeEXTREMEfEXTREMEoEXTREMErEXTREMEeEXTREMEsEXTREMEtEXTREME", true))()", true))()")
+queue_on_teleport("loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/main/EXTREMEsEXTREMEpEXTREMEoEXTREMEoEXTREMEkEXTREMEyEXTREMEnEXTREMEiEXTREMEgEXTREMEhEXTREMEtEXTREMEsEXTREMEiEXTREMEnEXTREMEtEXTREMEhEXTREMEeEXTREMEfEXTREMEoEXTREMErEXTREMEeEXTREMEsEXTREMEtEXTREME", true))()", true))()")
+getgenv().AutoFarm = true
+getgenv().hop = "old"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/Farm%20Diamond%20v2.lua"))()
