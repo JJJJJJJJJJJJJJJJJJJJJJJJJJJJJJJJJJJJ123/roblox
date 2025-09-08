@@ -1,7 +1,9 @@
 queue_on_teleport([[loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/refs/heads/main/EXTREMEsEXTREMEpEXTREMEoEXTREMEoEXTREMEkEXTREMEyEXTREMEnEXTREMEiEXTREMEgEXTREMEhEXTREMEtEXTREMEsEXTREMEiEXTREMEnEXTREMEtEXTREMEhEXTREMEeEXTREMEfEXTREMEoEXTREMErEXTREMEeEXTREMEsEXTREMEtEXTREME", true))()]])
 getgenv().AutoFarm = true
 getgenv().hop = "old"
+task.spawn(function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/Farm%20Diamond%20v2.lua"))()
+end)
 task.wait(2)
 queue_on_teleport([[loadstring(game:HttpGet("https://raw.githubusercontent.com/JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ123/roblox/refs/heads/main/EXTREMEsEXTREMEpEXTREMEoEXTREMEoEXTREMEkEXTREMEyEXTREMEnEXTREMEiEXTREMEgEXTREMEhEXTREMEtEXTREMEsEXTREMEiEXTREMEnEXTREMEtEXTREMEhEXTREMEeEXTREMEfEXTREMEoEXTREMErEXTREMEeEXTREMEsEXTREMEtEXTREME", true))()]])
 game:GetService("TeleportService"):Teleport(79546208627805, game.Players.LocalPlayer)
